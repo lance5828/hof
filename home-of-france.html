@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home of France — Tagaytay Staycation</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    section, footer { padding: 56px 24px; }
+    .hero { padding: 0 24px 90px; }
+    .hero-stats { right: 24px; gap: 18px; }
+    .featured-wrap { margin: 0 24px; }
+    .featured { grid-template-columns: 1fr; }
+    .featured-img { display: none; }
+    .featured-body { padding: 36px 28px; }
+    .amenity-grid { grid-template-columns: repeat(2,1fr); }
+    .exp-grid { grid-template-columns: 1fr; height: auto; }
+    .exp-item:first-child { grid-row: auto; }
+    .exp-item { height: 180px; }
+    .nearby-grid { grid-template-columns: 1fr; }
+    .t-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo-wrap">
+    <div class="logo-main">⚜ HOME OF FRANCE</div>
+    <div class="logo-sub">Tagaytay Staycation · SMDC Wind Residences</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#rooms">Rooms</a></li>
+    <li><a href="#amenities">Amenities</a></li>
+    <li><a href="#nearby">Location</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openModal(null)">BOOK NOW</button>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span> Now Accepting Bookings</div>
+    <h1>A TOUCH OF <em>FRANCE</em> IN TAGAYTAY</h1>
+    <div class="hero-loc">📍 SMDC Wind Residences, Tagaytay City · ~2 hrs from Manila</div>
+    <p>Cozy, homey, and affordable — wake up to stunning Taal Volcano views and breathe the cool Tagaytay breeze without ever boarding a plane.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openModal(null)"><span class="play-icon"></span> RESERVE NOW</button>
+      <button class="btn-ghost" onclick="document.getElementById('rooms').scrollIntoView()">EXPLORE ROOMS</button>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">4.9</div><div class="stat-label">Rating</div></div>
+    <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Happy Guests</div></div>
+    <div class="stat"><div class="stat-num">2hrs</div><div class="stat-label">From Manila</div></div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div>SCROLL</div>
+</div>
+
+<section id="rooms">
+  <div class="section-header">
+    <div class="section-label">Our Spaces</div>
+    <div class="section-title">Choose Your Room</div>
+  </div>
+  <div class="row-wrap">
+    <button class="row-arrow left" onclick="scrollRow('rooms-row',-1)">&#8249;</button>
+    <div class="row" id="rooms-row"></div>
+    <button class="row-arrow right" onclick="scrollRow('rooms-row',1)">&#8250;</button>
+  </div>
+</section>
+
+<div class="featured-wrap">
+  <div class="featured">
+    <div class="featured-img"></div>
+    <div class="featured-body">
+      <div class="section-label">Best Value</div>
+      <h2>WEEKEND ESCAPE PACKAGE</h2>
+      <p>Book 2 nights and enjoy priority check-in, welcome refreshments, a curated Tagaytay itinerary guide, and full access to all resort amenities — pools, gym, tennis & basketball courts.</p>
+      <div class="price-row"><span class="amt">₱4,500</span><span class="per">/ 2 nights · all-in</span></div>
+      <div class="price-note">*Weekday rates from ₱1,800/night</div>
+      <div class="featured-btns">
+        <button class="btn-primary" onclick="openModal({name:'Weekend Escape Package',img:'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=200&q=80',price:4500,flat:true,meta:'2 nights · all amenities included'})">BOOK PACKAGE</button>
+        <button class="btn-ghost">LEARN MORE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="amenities" style="background:var(--surface)">
+  <div class="section-header">
+    <div class="section-label">What's Included</div>
+    <div class="section-title">Resort-Style Amenities</div>
+  </div>
+  <div class="amenity-grid">
+    <div class="amenity"><div class="amenity-icon">🏊</div><div class="amenity-name">Indoor & Outdoor Pools</div><div class="amenity-desc">Two swimming pools including a children's pool — perfect for families and barkada trips.</div></div>
+    <div class="amenity"><div class="amenity-icon">🌋</div><div class="amenity-name">Taal Volcano Views</div><div class="amenity-desc">Wake up to stunning panoramic views of Taal Lake and Volcano straight from your balcony.</div></div>
+    <div class="amenity"><div class="amenity-icon">🏋️</div><div class="amenity-name">Fitness Center</div><div class="amenity-desc">Fully-equipped gym available to all guests throughout your stay at no extra cost.</div></div>
+    <div class="amenity"><div class="amenity-icon">🎾</div><div class="amenity-name">Tennis & Basketball</div><div class="amenity-desc">On-site sports courts for the active guest — included in your stay.</div></div>
+    <div class="amenity"><div class="amenity-icon">🍳</div><div class="amenity-name">Full Kitchenette</div><div class="amenity-desc">Refrigerator, microwave, stovetop, rice cooker and complete cookware included.</div></div>
+    <div class="amenity"><div class="amenity-icon">🅿️</div><div class="amenity-name">Free Parking</div><div class="amenity-desc">Dedicated parking slot available at no extra cost for all guests.</div></div>
+    <div class="amenity"><div class="amenity-icon">📶</div><div class="amenity-name">Free Fast WiFi</div><div class="amenity-desc">High-speed internet throughout your stay — stream, work, or video call freely.</div></div>
+    <div class="amenity"><div class="amenity-icon">🌿</div><div class="amenity-name">Gardens & Nature Trails</div><div class="amenity-desc">Peaceful landscaped grounds and walking paths for relaxation and morning strolls.</div></div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="section-header" style="padding-top:76px">
+    <div class="section-label">The Tagaytay Life</div>
+    <div class="section-title">Experiences Nearby</div>
+  </div>
+  <div class="exp-grid">
+    <div class="exp-item"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80" alt="Taal"><div class="exp-label">Taal Volcano View<div class="exp-sub">Straight from your balcony</div></div></div>
+    <div class="exp-item"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&q=80" alt="Cool"><div class="exp-label">Cool Climate<div class="exp-sub">18–24°C all year</div></div></div>
+    <div class="exp-item"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80" alt="Food"><div class="exp-label">Food Capital<div class="exp-sub">Bulalo, tawilis & more</div></div></div>
+    <div class="exp-item"><img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&q=80" alt="Sky Ranch"><div class="exp-label">Sky Ranch<div class="exp-sub">5-min walk away</div></div></div>
+    <div class="exp-item"><img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=500&q=80" alt="Pool"><div class="exp-label">Resort Pools<div class="exp-sub">Included in your stay</div></div></div>
+  </div>
+</section>
+
+<section id="nearby">
+  <div class="section-header">
+    <div class="section-label">Getting Here</div>
+    <div class="section-title">Prime Tagaytay Location</div>
+  </div>
+  <div class="nearby-grid">
+    <div class="map-box">
+      <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=700&q=80" alt="map">
+      <div class="map-pin"><div class="pin-dot"></div><div class="pin-label">⚜ Home of France</div></div>
+    </div>
+    <ul class="nearby-list">
+      <li class="nearby-item"><span>🎡 Sky Ranch Tagaytay</span><span class="nearby-dist">5-min walk</span></li>
+      <li class="nearby-item"><span>🛒 Robinson's Supermarket</span><span class="nearby-dist">6-min walk</span></li>
+      <li class="nearby-item"><span>☕ Starbucks / Bag of Beans</span><span class="nearby-dist">10-min walk</span></li>
+      <li class="nearby-item"><span>🍖 Gerry's Grill / Pizza Hut</span><span class="nearby-dist">5-min walk</span></li>
+      <li class="nearby-item"><span>🏨 Summit Ridge Promenade</span><span class="nearby-dist">10-min walk</span></li>
+      <li class="nearby-item"><span>🚌 Manila (Aguinaldo Highway)</span><span class="nearby-dist">~2 hrs drive</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="reviews" style="background:var(--surface)">
+  <div class="section-header">
+    <div class="section-label">What Guests Are Saying</div>
+    <div class="section-title">Real Guest Reviews</div>
+  </div>
+  <div class="t-grid">
+    <div class="t-card">
+      <div class="t-quote">"</div>
+      <div class="t-stars">★★★★★</div>
+      <p class="t-text">The ambiance and the location view was really awesome. It's perfect for family bonds. We really enjoyed our staycation — thank you so much!</p>
+      <div class="t-source">✓ Verified · Booking.com</div>
+      <div class="t-author"><div class="t-avatar">JM</div><div><div class="t-name">JM</div><div class="t-trip">Family stay · SMDC Wind Residences</div></div></div>
+    </div>
+    <div class="t-card">
+      <div class="t-quote">"</div>
+      <div class="t-stars">★★★★★</div>
+      <p class="t-text">Tagaytay has a special place in my heart and SMDC Wind has the perfect spot seeing Taal from my window. I can just sit all day looking at it while enjoying a cup of coffee and the breeze.</p>
+      <div class="t-source">✓ Verified · TripAdvisor</div>
+      <div class="t-author"><div class="t-avatar">RB</div><div><div class="t-name">RB</div><div class="t-trip">Leisure stay · Taal View Unit</div></div></div>
+    </div>
+    <div class="t-card">
+      <div class="t-quote">"</div>
+      <div class="t-stars">★★★★★</div>
+      <p class="t-text">Great location — near Sky Ranch, 7-11, and Robinson's. The transaction was fast and the staff were very helpful. Perfect price for a staycation with family and friends!</p>
+      <div class="t-source">✓ Verified · Booking.com</div>
+      <div class="t-author"><div class="t-avatar">AL</div><div><div class="t-name">AL</div><div class="t-trip">Group stay · Weekend</div></div></div>
+    </div>
+    <div class="t-card">
+      <div class="t-quote">"</div>
+      <div class="t-stars">★★★★★</div>
+      <p class="t-text">I thoroughly enjoyed my stay at the property. Can't wait to have the chance to go back. The pools and the cool mountain air made it so worth it.</p>
+      <div class="t-source">✓ Verified · Booking.com</div>
+      <div class="t-author"><div class="t-avatar">SK</div><div><div class="t-name">SK</div><div class="t-trip">Weekend getaway</div></div></div>
+    </div>
+    <div class="t-card">
+      <div class="t-quote">"</div>
+      <div class="t-stars">★★★★★</div>
+      <p class="t-text">Cozy yet affordable — accessible by any mode of transportation. The unit had everything we needed. A convenient and notable haven for your staycation.</p>
+      <div class="t-source">✓ Verified · TripAdvisor</div>
+      <div class="t-author"><div class="t-avatar">PD</div><div><div class="t-name">PD</div><div class="t-trip">Couple stay</div></div></div>
+    </div>
+    <div class="t-card">
+      <div class="t-quote">"</div>
+      <div class="t-stars">★★★★☆</div>
+      <p class="t-text">Location and view is nice. Room is big and clean. The facilities of the compound were great — especially the clubhouse amenities. The hostess was very accommodating throughout.</p>
+      <div class="t-source">✓ Verified · Booking.com</div>
+      <div class="t-author"><div class="t-avatar">MV</div><div><div class="t-name">MV</div><div class="t-trip">Family stay · 2 nights</div></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">⚜ HOME OF FRANCE</div>
+      <div class="footer-sub">Tagaytay Staycation · SMDC Wind Residences</div>
+      <p>Cozy, homey, and affordable — your home away from home in the cool highlands of Tagaytay City. Just 2 hours from Manila, a world away from the ordinary.</p>
+    </div>
+    <div class="footer-col"><h4>Our Rooms</h4><ul><li><a href="#">Studio Unit</a></li><li><a href="#">Deluxe Room</a></li><li><a href="#">Taal View Suite</a></li><li><a href="#">Weekend Packages</a></li></ul></div>
+    <div class="footer-col"><h4>Information</h4><ul><li><a href="#">About Us</a></li><li><a href="#">House Rules</a></li><li><a href="#">FAQs</a></li><li><a href="#">Cancellation Policy</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="https://www.facebook.com/homeoffrance" target="_blank">Facebook Page</a></li><li><a href="#">Send a Message</a></li><li><a href="#">Messenger</a></li><li><a href="#">Instagram</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Home of France Tagaytay Staycation. All rights reserved.</span>
+    <span>Made with ♥ for unforgettable Tagaytay stays</span>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-form">
+      <h3>RESERVE YOUR STAY</h3>
+      <div class="modal-sub">Fill in your details and we'll confirm within 24 hours via Facebook or email.</div>
+      <div class="modal-room" id="modal-room-info"></div>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input type="text" placeholder="Juan" id="fname"></div>
+        <div class="form-group"><label>Last Name</label><input type="text" placeholder="dela Cruz" id="lname"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px"><label>Email / Facebook</label><input type="text" placeholder="email or facebook.com/yourname" id="email"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Check-In</label><input type="date" id="checkin"></div>
+        <div class="form-group"><label>Check-Out</label><input type="date" id="checkout"></div>
+      </div>
+      <div class="form-row" style="margin-top:0">
+        <div class="form-group"><label>Guests</label><select id="guests"><option>1 Guest</option><option selected>2 Guests</option><option>3 Guests</option><option>4 Guests</option></select></div>
+        <div class="form-group"><label>Add-Ons</label><select id="addons"><option>None</option><option>Welcome Basket (₱500)</option><option>Breakfast Package (₱350/night)</option><option>Pool Voucher (₱200)</option></select></div>
+      </div>
+      <div class="total-bar"><span class="total-label">Estimated Total</span><span class="total-amount" id="total-display">₱ —</span></div>
+      <button class="submit-btn" onclick="submitBooking()">CONFIRM RESERVATION</button>
+    </div>
+    <div class="success-msg" id="modal-success" style="display:none">
+      <div class="success-icon">⚜</div>
+      <h3>BOOKING RECEIVED!</h3>
+      <p>Thank you for booking with Home of France.<br>We'll reach out via Facebook or email within 24 hours.<br><br><em style="color:var(--gold);font-size:.85rem">À bientôt — see you in Tagaytay!</em></p>
+      <button class="submit-btn" style="margin-top:28px" onclick="closeModal()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
