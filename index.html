@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Home of France — Tagaytay Staycation</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
     <div class="logo-sub">Tagaytay Staycation · SMDC Wind Residences</div>
   </div>
   <ul class="nav-links">
-    <li><a href="#rooms">Rooms</a></li>
+    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#amenities">Amenities</a></li>
     <li><a href="#nearby">Location</a></li>
     <li><a href="#reviews">Reviews</a></li>
@@ -26,100 +26,133 @@
 <div class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-badge"><span class="dot"></span> Now Accepting Bookings</div>
-    <h1>A Home Built with <em>Love </em></h1>
-    <div class="hero-loc">📍 SMDC Wind Residences, Tagaytay City · ~2 hrs from Manila</div>
-    <p>Cozy, homey, and affordable — wake up to stunning Taal Volcano views and breathe the cool Tagaytay breeze without ever boarding a plane.</p>
+    <div class="hero-badge"><span class="dot"></span> Airbnb Superhost · Legit Owner</div>
+    <h1>A Home Made with <em>LOVE</em></h1>
+    <div class="hero-loc">📍 Tower 4 · 21st Floor · SMDC Wind Residences, Tagaytay</div>
+    <p>Skyline / city view unit with unlimited WiFi, Netflix, PS4, mini karaoke, light cooking setup, and surprise room styling available for special occasions.</p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="openModal(null)"><span class="play-icon"></span> RESERVE NOW</button>
-      <button class="btn-ghost" onclick="document.getElementById('rooms').scrollIntoView()">EXPLORE ROOMS</button>
+      <button class="btn-primary" onclick="openModal(null)"> RESERVE NOW</button>
+      <button class="btn-ghost" onclick="document.getElementById('gallery').scrollIntoView()">VIEW GALLERY</button>
     </div>
   </div>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num">4.9</div><div class="stat-label">Rating</div></div>
-    <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Happy Guests</div></div>
+    <div class="stat"><div class="stat-num">★★★★★</div><div class="stat-label">Rating</div></div>
+    <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Happy Guests</div></div>
     <div class="stat"><div class="stat-num">2hrs</div><div class="stat-label">From Manila</div></div>
   </div>
   <div class="scroll-hint"><div class="scroll-line"></div>SCROLL</div>
 </div>
 
-<section id="rooms">
-  <div class="section-header">
-    <div class="section-label">Our Spaces</div>
-    <div class="section-title">Choose Your Room</div>
-  </div>
-  <div class="row-wrap">
-    <button class="row-arrow left" onclick="scrollRow('rooms-row',-1)">&#8249;</button>
-    <div class="row" id="rooms-row"></div>
-    <button class="row-arrow right" onclick="scrollRow('rooms-row',1)">&#8250;</button>
-  </div>
-</section>
-
 <div class="featured-wrap">
   <div class="featured">
     <div class="featured-img"></div>
     <div class="featured-body">
-      <div class="section-label">Best Value</div>
-      <h2>WEEKEND ESCAPE PACKAGE</h2>
-      <p>Book 2 nights and enjoy priority check-in, welcome refreshments, a curated Tagaytay itinerary guide, and full access to all resort amenities — pools, gym, tennis & basketball courts.</p>
-      <div class="price-row"><span class="amt">₱4,500</span><span class="per">/ 2 nights · all-in</span></div>
-      <div class="price-note">*Weekday rates from ₱1,800/night</div>
+      <div class="section-label">Rates & Stay Details</div>
+      <h2>STANDARD STAY INFORMATION</h2>
+      <p>1BR skyline / city view unit for 1 to 2 guests, with a max of 4 guests total. Discount of ₱100 per night applies for stays longer than 1 night, and surprise setup can be arranged for special occasions.</p>
+      <div class="price-row"><span class="amt">₱2,200</span><span class="per">/ Sun-Thu · 1-2 pax</span></div>
+      <div class="price-note">Fri, Sat & holidays: ₱2,500 · extra guest: ₱200 each · max 4 pax only</div>
+      <ul class="featured-list">
+        <li>Check-in: 2:00 PM</li>
+        <li>Check-out: 12:00 PM</li>
+        <li>Standard stay: 22 hours</li>
+        <li>Light cooking allowed</li>
+      </ul>
       <div class="featured-btns">
-        <button class="btn-primary" onclick="openModal({name:'Weekend Escape Package',img:'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=200&q=80',price:4500,flat:true,meta:'2 nights · all amenities included'})">BOOK PACKAGE</button>
-        <button class="btn-ghost">LEARN MORE</button>
+        <button class="btn-primary" onclick="openModal(null)">BOOK NOW</button>
+        <button class="btn-ghost" onclick="document.getElementById('amenities').scrollIntoView()">VIEW INCLUSIONS</button>
       </div>
     </div>
   </div>
 </div>
 
+<section id="gallery">
+  <div class="section-header">
+    <div class="section-label">Inside the Unit</div>
+    <div class="section-title">Unit Gallery</div>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item wide"><img src="images/room-wide-view.jpeg" alt="Wide view of the 1BR unit" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/room-bedroom-blue-curtains.jpeg" alt="Bedroom with blue curtains" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/room-bedroom-main.jpeg" alt="Main bedroom angle" loading="lazy"></div>
+    <div class="gallery-item square"><img src="images/room-bedroom-wardrobe.jpeg" alt="Bedroom with wardrobe" loading="lazy"></div>
+    <div class="gallery-item wide"><img src="images/room-living-area.jpeg" alt="Living area of the unit" loading="lazy"></div>
+    <div class="gallery-item square"><img src="images/room-tv-lounge.jpeg" alt="TV lounge and entertainment area" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/dining-area.jpeg" alt="Dining area setup" loading="lazy"></div>
+    <div class="gallery-item wide"><img src="images/room-wide-view.jpeg" alt="Wide view of the 1BR unit" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/room-bedroom-blue-curtains.jpeg" alt="Bedroom with blue curtains" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/room-bedroom-main.jpeg" alt="Main bedroom angle" loading="lazy"></div>
+    <div class="gallery-item square"><img src="images/room-bedroom-wardrobe.jpeg" alt="Bedroom with wardrobe" loading="lazy"></div>
+    <div class="gallery-item wide"><img src="images/room-living-area.jpeg" alt="Living area of the unit" loading="lazy"></div>
+    <div class="gallery-item square"><img src="images/room-tv-lounge.jpeg" alt="TV lounge and entertainment area" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/dining-area.jpeg" alt="Dining area setup" loading="lazy"></div>
+    <div class="gallery-item wide"><img src="images/room-wide-view.jpeg" alt="Wide view of the 1BR unit" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/room-bedroom-blue-curtains.jpeg" alt="Bedroom with blue curtains" loading="lazy"></div>
+    <div class="gallery-item wide"><img src="images/room-living-area.jpeg" alt="Living area of the unit" loading="lazy"></div>
+    <div class="gallery-item square"><img src="images/room-tv-lounge.jpeg" alt="TV lounge and entertainment area" loading="lazy"></div>
+    <div class="gallery-item standard"><img src="images/dining-area.jpeg" alt="Dining area setup" loading="lazy"></div>
+  </div>
+</section>
+
 <section id="amenities" style="background:var(--surface)">
   <div class="section-header">
-    <div class="section-label">What's Included</div>
-    <div class="section-title">Resort-Style Amenities</div>
+    <div class="section-label">Inside the Unit</div>
+    <div class="section-title">Unit Inclusions</div>
   </div>
   <div class="amenity-grid">
-    <div class="amenity"><div class="amenity-icon">🏊</div><div class="amenity-name">Indoor & Outdoor Pools</div><div class="amenity-desc">Two swimming pools including a children's pool — perfect for families and barkada trips.</div></div>
-    <div class="amenity"><div class="amenity-icon">🌋</div><div class="amenity-name">Taal Volcano Views</div><div class="amenity-desc">Wake up to stunning panoramic views of Taal Lake and Volcano straight from your balcony.</div></div>
-    <div class="amenity"><div class="amenity-icon">🏋️</div><div class="amenity-name">Fitness Center</div><div class="amenity-desc">Fully-equipped gym available to all guests throughout your stay at no extra cost.</div></div>
-    <div class="amenity"><div class="amenity-icon">🎾</div><div class="amenity-name">Tennis & Basketball</div><div class="amenity-desc">On-site sports courts for the active guest — included in your stay.</div></div>
-    <div class="amenity"><div class="amenity-icon">🍳</div><div class="amenity-name">Full Kitchenette</div><div class="amenity-desc">Refrigerator, microwave, stovetop, rice cooker and complete cookware included.</div></div>
-    <div class="amenity"><div class="amenity-icon">🅿️</div><div class="amenity-name">Free Parking</div><div class="amenity-desc">Dedicated parking slot available at no extra cost for all guests.</div></div>
-    <div class="amenity"><div class="amenity-icon">📶</div><div class="amenity-name">Free Fast WiFi</div><div class="amenity-desc">High-speed internet throughout your stay — stream, work, or video call freely.</div></div>
-    <div class="amenity"><div class="amenity-icon">🌿</div><div class="amenity-name">Gardens & Nature Trails</div><div class="amenity-desc">Peaceful landscaped grounds and walking paths for relaxation and morning strolls.</div></div>
+    <div class="amenity"><div class="amenity-icon">📶</div><div class="amenity-name">Unlimited WiFi</div><div class="amenity-desc">PLDT Fiber 100mbps connection for streaming, work, and gaming.</div></div>
+    <div class="amenity"><div class="amenity-icon">🎮</div><div class="amenity-name">Entertainment Ready</div><div class="amenity-desc">Netflix, PS4, mini karaoke, boardgames, and a 55-inch smart TV.</div></div>
+    <div class="amenity"><div class="amenity-icon">🛏️</div><div class="amenity-name">Sleep Setup</div><div class="amenity-desc">1 queen-size bed plus a double sofa bed for up to 4 guests.</div></div>
+    <div class="amenity"><div class="amenity-icon">🍳</div><div class="amenity-name">Light Cooking Allowed</div><div class="amenity-desc">Refrigerator, rice cooker, microwave, kettle, induction stove, and loaf toaster included.</div></div>
+    <div class="amenity"><div class="amenity-icon">❄️</div><div class="amenity-name">Comfort Essentials</div><div class="amenity-desc">Split-type inverter aircon, ceiling light with fan, and shower heater.</div></div>
+    <div class="amenity"><div class="amenity-icon">🔐</div><div class="amenity-name">Digital Lock Entry</div><div class="amenity-desc">Self-access convenience with a secure digital lock door system.</div></div>
+    <div class="amenity"><div class="amenity-icon">☕</div><div class="amenity-name">Complimentary Basics</div><div class="amenity-desc">Free bottled water, coffee for two, 2 towels, tissue, liquid soap, and shampoo.</div></div>
+    <div class="amenity"><div class="amenity-icon">🎉</div><div class="amenity-name">Special Occasion Setup</div><div class="amenity-desc">Surprise room styling can be arranged for birthdays, anniversaries, and celebrations.</div></div>
   </div>
 </section>
 
 <section style="padding-top:0">
   <div class="section-header" style="padding-top:76px">
-    <div class="section-label">The Tagaytay Life</div>
-    <div class="section-title">Experiences Nearby</div>
+    <div class="section-label">What Guests Love</div>
+    <div class="section-title">Property Highlights</div>
   </div>
   <div class="exp-grid">
-    <div class="exp-item"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=80" alt="Taal"><div class="exp-label">Taal Volcano View<div class="exp-sub">Straight from your balcony</div></div></div>
-    <div class="exp-item"><img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500&q=80" alt="Cool"><div class="exp-label">Cool Climate<div class="exp-sub">18–24°C all year</div></div></div>
-    <div class="exp-item"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80" alt="Food"><div class="exp-label">Food Capital<div class="exp-sub">Bulalo, tawilis & more</div></div></div>
-    <div class="exp-item"><img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&q=80" alt="Sky Ranch"><div class="exp-label">Sky Ranch<div class="exp-sub">5-min walk away</div></div></div>
-    <div class="exp-item"><img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=500&q=80" alt="Pool"><div class="exp-label">Resort Pools<div class="exp-sub">Included in your stay</div></div></div>
+    <div class="exp-item"><img src="images/city-views.jpeg" alt="Skyline and city view"><div class="exp-label">Skyline / City View<div class="exp-sub">A breezy Tagaytay outlook from the 21st floor</div></div></div>
+    <div class="exp-item"><img src="images/amenity-pool-main.jpeg" alt="Indoor and outdoor pool"><div class="exp-label">Pool Access<div class="exp-sub">Indoor heated pool and gazebo outdoor pool</div></div></div>
+    <div class="exp-item"><img src="images/amenity-basketball-court.jpg" alt="Basketball court"><div class="exp-label">Sports Courts<div class="exp-sub">Basketball, badminton, and tennis options on-site</div></div></div>
+    <div class="exp-item"><img src="images/exterior-complex-view.jpeg" alt="Tower 4 at Wind Residences"><div class="exp-label">Tower 4 Stay<div class="exp-sub">21st-floor 1BR unit at SMDC Wind Residences</div></div></div>
+    <div class="exp-item"><img src="images/ps4.avif" alt="PS4 and entertainment setup"><div class="exp-label">Entertainment Nights<div class="exp-sub">Netflix, PS4, karaoke, and cozy indoor hangouts</div></div></div>
   </div>
 </section>
 
 <section id="nearby">
   <div class="section-header">
-    <div class="section-label">Getting Here</div>
-    <div class="section-title">Prime Tagaytay Location</div>
+    <div class="section-label">Resort Access</div>
+    <div class="section-title">More Information</div>
   </div>
   <div class="nearby-grid">
     <div class="map-box">
-      <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=700&q=80" alt="map">
-      <div class="map-pin"><div class="pin-dot"></div><div class="pin-label">⚜ Home of France</div></div>
+      <img src="images/exterior-building-entrance.jpg" alt="map">
+      <div class="map-pin"><div class="pin-dot"></div><div class="pin-label">⚜ Tower 4 · 21st Floor</div></div>
     </div>
     <ul class="nearby-list">
-      <li class="nearby-item"><span>🎡 Sky Ranch Tagaytay</span><span class="nearby-dist">5-min walk</span></li>
-      <li class="nearby-item"><span>🛒 Robinson's Supermarket</span><span class="nearby-dist">6-min walk</span></li>
-      <li class="nearby-item"><span>☕ Starbucks / Bag of Beans</span><span class="nearby-dist">10-min walk</span></li>
-      <li class="nearby-item"><span>🍖 Gerry's Grill / Pizza Hut</span><span class="nearby-dist">5-min walk</span></li>
-      <li class="nearby-item"><span>🏨 Summit Ridge Promenade</span><span class="nearby-dist">10-min walk</span></li>
-      <li class="nearby-item"><span>🚌 Manila (Aguinaldo Highway)</span><span class="nearby-dist">~2 hrs drive</span></li>
+      <li class="nearby-item"><span>🏛 Clubhouse & Function Rooms</span><span class="nearby-dist">Minimum charges apply</span></li>
+      <li class="nearby-item"><span>🌊 Pool Access</span><span class="nearby-dist">₱150 regular · ₱300 holidays</span></li>
+      <li class="nearby-item"><span>🧼 Indoor Pool Schedule</span><span class="nearby-dist">Closed every Thursday</span></li>
+      <li class="nearby-item"><span>🏸 Sports & Recreation</span><span class="nearby-dist">Billiards · badminton · tennis</span></li>
+      <li class="nearby-item"><span>🚙 Basement Parking</span><span class="nearby-dist">₱450/day · advance booking</span></li>
+      <li class="nearby-item"><span>🅿️ Clubhouse Parking</span><span class="nearby-dist">Paid parking available at the clubhouse</span></li>
+      <li class="nearby-item"><span>🚭 House Rule</span><span class="nearby-dist">No smoking / vaping inside</span></li>
+      <li class="nearby-subhead">What's Near</li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Sky+Ranch+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">🎡 Sky Ranch Tagaytay</a><span class="nearby-dist">Nearby attraction</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=7-Eleven+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">🏪 7-Eleven</a><span class="nearby-dist">Quick essentials nearby</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Robinsons+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">🛍 Robinsons Tagaytay</a><span class="nearby-dist">Dining and shopping options</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Ayala+Malls+Serin+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">🛒 Ayala Malls Serin</a><span class="nearby-dist">Mall, restaurants, and cafes</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Mahogany+Beef+Market+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">🥩 Mahogany Beef Market</a><span class="nearby-dist">Bulalo eateries and local market</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=People%27s+Park+in+the+Sky&travelmode=driving" target="_blank" rel="noopener noreferrer">🌄 People's Park in the Sky</a><span class="nearby-dist">Scenic viewpoint destination</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Our+Lady+of+Lourdes+Parish+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">⛪ Our Lady of Lourdes Parish</a><span class="nearby-dist">Quiet church stop nearby</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Tagaytay+Picnic+Grove&travelmode=driving" target="_blank" rel="noopener noreferrer">🌲 Picnic Grove</a><span class="nearby-dist">Family-friendly outdoor area</span></li>
+      <li class="nearby-item"><a class="nearby-link" href="https://www.google.com/maps/dir/?api=1&origin=SMDC+Wind+Residences+Tower+4+Tagaytay&destination=Bag+of+Beans+Tagaytay&travelmode=driving" target="_blank" rel="noopener noreferrer">☕ Bag of Beans</a><span class="nearby-dist">Popular cafe and bakery</span></li>
     </ul>
   </div>
 </section>
@@ -127,50 +160,53 @@
 <section id="reviews" style="background:var(--surface)">
   <div class="section-header">
     <div class="section-label">What Guests Are Saying</div>
-    <div class="section-title">Real Guest Reviews</div>
+    <div class="section-title"> Guest Reviews</div>
   </div>
   <div class="t-grid">
     <div class="t-card">
       <div class="t-quote">"</div>
       <div class="t-stars">★★★★★</div>
-      <p class="t-text">The ambiance and the location view was really awesome. It's perfect for family bonds. We really enjoyed our staycation — thank you so much!</p>
-      <div class="t-source">✓ Verified · Booking.com</div>
-      <div class="t-author"><div class="t-avatar">JM</div><div><div class="t-name">JM</div><div class="t-trip">Family stay · SMDC Wind Residences</div></div></div>
+      <p class="t-text">Thank you so much HOME OF FRANCE Tagaytay Staycation Home of France -SMDC for our very relaxing, comfortable, really safe and awesome 3 days and 2 nights staycation! We sincerely appreciate all your efforts in ensuring that we are well 
+        taken cared of during our stay at your very homey, very neat/clean, lots of amenities like Netflix, PS4, board games, fast internet connection and unit with a picturesque view🥰🥰 .</p>
+      <div class="t-source">✓ Verified · Facebook</div>
+      <div class="t-author"><div class="t-avatar">IB</div><div><div class="t-name">Imee Gomez-Baybay</div></div></div>
     </div>
     <div class="t-card">
       <div class="t-quote">"</div>
       <div class="t-stars">★★★★★</div>
-      <p class="t-text">Tagaytay has a special place in my heart and SMDC Wind has the perfect spot seeing Taal from my window. I can just sit all day looking at it while enjoying a cup of coffee and the breeze.</p>
-      <div class="t-source">✓ Verified · TripAdvisor</div>
-      <div class="t-author"><div class="t-avatar">RB</div><div><div class="t-name">RB</div><div class="t-trip">Leisure stay · Taal View Unit</div></div></div>
+      <p class="t-text">sobrang nakakarelax mag stay dito.no hassle rin katransact yung owner. super nag enjoy talaga kami ng hubby ko when we stayed here for 3D2N. highly recommended 👍👍👍</p>
+      <div class="t-source">✓ Verified · Facebook</div>
+      <div class="t-author"><div class="t-avatar">RP</div><div><div class="t-name">Robie Nelle Angcanan Perez</div></div></div>
     </div>
     <div class="t-card">
       <div class="t-quote">"</div>
       <div class="t-stars">★★★★★</div>
-      <p class="t-text">Great location — near Sky Ranch, 7-11, and Robinson's. The transaction was fast and the staff were very helpful. Perfect price for a staycation with family and friends!</p>
-      <div class="t-source">✓ Verified · Booking.com</div>
-      <div class="t-author"><div class="t-avatar">AL</div><div><div class="t-name">AL</div><div class="t-trip">Group stay · Weekend</div></div></div>
+      <p class="t-text">I would like to commend for the cozy staycation we had. Our room is very neat with complete kitchenwares. Ambiance in the window po is super nakakarelax kasi in two mornings of stay namin talagang super fog sa Tagaytay, feels like Baguio talaga. 
+        We enjoy watching because may Netflix and free wifi access. Super naenjoy namin ang stay. So guys! Pabook na rin kayo sa kanila. ❤️❤️❤️</p>
+      <div class="t-source">✓ Verified · Facebook</div>
+      <div class="t-author"><div class="t-avatar">GM</div><div><div class="t-name">Gladys Belandres - Montero </div></div></div>
     </div>
     <div class="t-card">
       <div class="t-quote">"</div>
       <div class="t-stars">★★★★★</div>
-      <p class="t-text">I thoroughly enjoyed my stay at the property. Can't wait to have the chance to go back. The pools and the cool mountain air made it so worth it.</p>
-      <div class="t-source">✓ Verified · Booking.com</div>
-      <div class="t-author"><div class="t-avatar">SK</div><div><div class="t-name">SK</div><div class="t-trip">Weekend getaway</div></div></div>
+      <p class="t-text">Highly recommended👍😊. Great staycation experience. 🤗 extra special ang 8th Anniversary Celebration namin ni hubby dahil super ganda ng unit. 😍 Napakabait din ng owner. 👍</p>
+      <div class="t-source">✓ Verified · Facebook</div>
+      <div class="t-author"><div class="t-avatar">JD</div><div><div class="t-name">Jaizelle Angcaya Batara-Delima</div></div></div>
     </div>
     <div class="t-card">
       <div class="t-quote">"</div>
       <div class="t-stars">★★★★★</div>
-      <p class="t-text">Cozy yet affordable — accessible by any mode of transportation. The unit had everything we needed. A convenient and notable haven for your staycation.</p>
-      <div class="t-source">✓ Verified · TripAdvisor</div>
-      <div class="t-author"><div class="t-avatar">PD</div><div><div class="t-name">PD</div><div class="t-trip">Couple stay</div></div></div>
+      <p class="t-text">I enjoyed my stay in Home of France! The room was spotless and neatly organized. They even had a Ps4 that my son enjoyed along with a Netflix account that can be used for the TV. There’s some stuff that I couldn’t mentioned but this are the things that struck my attention throughout my stay. Thank you Home of France😊</p>
+      <div class="t-source">✓ Verified · Facebook</div>
+      <div class="t-author"><div class="t-avatar">AP</div><div><div class="t-name">Anne Palacio </div></div></div>
     </div>
     <div class="t-card">
       <div class="t-quote">"</div>
-      <div class="t-stars">★★★★☆</div>
-      <p class="t-text">Location and view is nice. Room is big and clean. The facilities of the compound were great — especially the clubhouse amenities. The hostess was very accommodating throughout.</p>
-      <div class="t-source">✓ Verified · Booking.com</div>
-      <div class="t-author"><div class="t-avatar">MV</div><div><div class="t-name">MV</div><div class="t-trip">Family stay · 2 nights</div></div></div>
+      <div class="t-stars">★★★★★</div>
+      <p class="t-text">Highly recommended ❤️ Super cozy ng ambiance and ang ganda ng unit nila! Malinis ang room and kumpleto sa gamit. Super worth it mag-stay here, nakaka-enjoy po, nakakabitin rin iyong isang araw lang. Sa sunod sana mas mahaba pa stay namin 🥰 Sa owner po thank you so much!! Very accomodating nila maam cecil, maam michellee and maam zusie, nafeel at home po talaga kami sa pag-aasikaso nyo.. 
+        And thank you po for making our anniversary extra special! Thank you po for your hardwork… See more</p>
+      <div class="t-source">✓ Verified · Facebook</div>
+      <div class="t-author"><div class="t-avatar">HA</div><div><div class="t-name">Hazel Agravante</div></div></div>
     </div>
   </div>
 </section>
@@ -180,15 +216,14 @@
     <div class="footer-brand">
       <div class="footer-logo">⚜ HOME OF FRANCE</div>
       <div class="footer-sub">Tagaytay Staycation · SMDC Wind Residences</div>
-      <p>Cozy, homey, and affordable — your home away from home in the cool highlands of Tagaytay City. Just 2 hours from Manila, a world away from the ordinary.</p>
+      <p>1BR skyline / city view staycation unit at SMDC Wind Residences, complete with WiFi, Netflix, PS4, karaoke, light cooking essentials, and a cozy setup for short escapes.</p>
     </div>
-    <div class="footer-col"><h4>Our Rooms</h4><ul><li><a href="#">Studio Unit</a></li><li><a href="#">Deluxe Room</a></li><li><a href="#">Taal View Suite</a></li><li><a href="#">Weekend Packages</a></li></ul></div>
-    <div class="footer-col"><h4>Information</h4><ul><li><a href="#">About Us</a></li><li><a href="#">House Rules</a></li><li><a href="#">FAQs</a></li><li><a href="#">Cancellation Policy</a></li></ul></div>
-    <div class="footer-col"><h4>Contact</h4><ul><li><a href="https://www.facebook.com/homeoffrance" target="_blank">Facebook Page</a></li><li><a href="#">Send a Message</a></li><li><a href="#">Messenger</a></li><li><a href="#">Instagram</a></li></ul></div>
+    <div class="footer-col"><h4>Stay Details</h4><ul><li><a href="#gallery">1BR Skyline / City View</a></li><li><a href="#gallery">Weekday: ₱2,200</a></li><li><a href="#gallery">Weekend: ₱2,500</a></li><li><a href="#gallery">Max 4 Guests</a></li></ul></div>
+    <div class="footer-col"><h4>Policies</h4><ul><li><a href="#nearby">Check-in: 2:00 PM</a></li><li><a href="#nearby">Check-out: 12:00 PM</a></li><li><a href="#nearby">Light Cooking Allowed</a></li><li><a href="#nearby">No Smoking / Vaping</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="https://www.facebook.com/homeoffrance" target="_blank">Facebook Page</a></li><li><a href="#amenities">Surprise Setup</a></li><li><a href="#nearby">Parking & Pool Info</a></li><li><a href="#reviews">Guest Reviews</a></li></ul></div>
   </div>
   <div class="footer-bottom">
     <span>© 2025 Home of France Tagaytay Staycation. All rights reserved.</span>
-    <span>Made with ♥ for unforgettable Tagaytay stays</span>
   </div>
 </footer>
 
@@ -197,7 +232,7 @@
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div id="modal-form">
       <h3>RESERVE YOUR STAY</h3>
-      <div class="modal-sub">Fill in your details and we'll confirm within 24 hours via Facebook or email.</div>
+      <div class="modal-sub">Fill in your details and we'll confirm your booking within 24 hours via Facebook or email.</div>
       <div class="modal-room" id="modal-room-info"></div>
       <div class="form-row">
         <div class="form-group"><label>First Name</label><input type="text" placeholder="Juan" id="fname"></div>
@@ -209,8 +244,8 @@
         <div class="form-group"><label>Check-Out</label><input type="date" id="checkout"></div>
       </div>
       <div class="form-row" style="margin-top:0">
-        <div class="form-group"><label>Guests</label><select id="guests"><option>1 Guest</option><option selected>2 Guests</option><option>3 Guests</option><option>4 Guests</option></select></div>
-        <div class="form-group"><label>Add-Ons</label><select id="addons"><option>None</option><option>Welcome Basket (₱500)</option><option>Breakfast Package (₱350/night)</option><option>Pool Voucher (₱200)</option></select></div>
+        <div class="form-group"><label>Guests</label><select id="guests"><option value="1">1 Guest</option><option value="2" selected>2 Guests</option><option value="3">3 Guests</option><option value="4">4 Guests</option></select></div>
+        <div class="form-group"><label>Add-Ons</label><select id="addons"><option value="none">None</option><option value="towel">Extra Towel (+₱50)</option><option value="pool-regular">Pool Access Regular (+₱150/person)</option><option value="pool-holiday">Pool Access Holiday (+₱300/person)</option><option value="parking">Basement Parking Request (+₱450/day)</option></select></div>
       </div>
       <div class="total-bar"><span class="total-label">Estimated Total</span><span class="total-amount" id="total-display">₱ —</span></div>
       <button class="submit-btn" onclick="submitBooking()">CONFIRM RESERVATION</button>
@@ -224,6 +259,6 @@
   </div>
 </div>
 
-<script src="js/script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
