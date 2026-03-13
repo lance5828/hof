@@ -3,12 +3,7 @@ window.addEventListener('scroll', () => {
 });
 
 const rooms = [
-  { name: 'Studio Suite', tag: 'Most Popular', price: 2200, stars: '★★★★★', meta: '2 Guests · Taal View Balcony', img: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=80' },
-  { name: 'Cozy Studio', tag: null, price: 1800, stars: '★★★★★', meta: '2 Guests · Garden View', img: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&q=80' },
-  { name: 'Deluxe Room', tag: 'Best View', price: 2800, stars: '★★★★★', meta: '4 Guests · Volcano Panorama', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400&q=80' },
-  { name: 'Romantic Suite', tag: "Couples' Pick", price: 2500, stars: '★★★★★', meta: '2 Guests · Romantic Setup', img: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&q=80' },
-  { name: 'Barkada Room', tag: null, price: 3200, stars: '★★★★☆', meta: '6 Guests · Extra Bedding', img: 'https://images.unsplash.com/photo-1462826303086-329426d1aef5?w=400&q=80' },
-  { name: 'Budget Studio', tag: 'Sulit!', price: 1500, stars: '★★★★☆', meta: '2 Guests · City View', img: 'https://images.unsplash.com/photo-1512918728672-1763af428f95?w=400&q=80' },
+  { name: 'Studio Suite', tag: 'Only Available', price: 2200, stars: '★★★★★', meta: '2 Guests · Taal View Balcony', img: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=80' },
 ];
 
 function makeCard(r) {
