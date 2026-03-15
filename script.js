@@ -3,7 +3,7 @@ window.addEventListener('scroll', () => {
 });
 
 const rooms = [
-  { name: '1BR Skyline / City View', tag: 'Tower 4 · 21st Floor', price: 2200, weekendPrice: 2500, stars: '★★★★★', meta: '1-2 Guests · Max 4 · Queen Bed + Double Sofa Bed', img: 'images/room-bedroom-blue-curtains.jpg' },
+  { name: '1BR Skyline / City View', tag: 'Tower 4 · 21st Floor', price: 2200, weekendPrice: 2500, stars: '★★★★★', meta: '1-2 Guests · Max 4 · Queen Bed + Double Sofa Bed', img: 'images/room-bedroom-blue-curtains.jpeg' },
 ];
 
 let currentRoom = null;
@@ -38,7 +38,6 @@ function updateTotal() {
     return;
   }
   const nights = Math.max(1, (new Date(cout) - new Date(cin)) / 86400000);
-  const addon = document.getElementById('addons').value;
   const guestCount = Number(document.getElementById('guests').value || 2);
 
   let roomTotal = 0;
@@ -56,17 +55,37 @@ function updateTotal() {
   }
 
   let extra = Math.max(0, guestCount - 2) * 200;
-  if (addon === 'towel') extra += 50;
-  if (addon === 'pool-regular') extra += 150 * guestCount;
-  if (addon === 'pool-holiday') extra += 300 * guestCount;
-  if (addon === 'parking') extra += 450 * nights;
+  
+  // Handle multiple add-ons
+  const addonCheckboxes = document.querySelectorAll('.addon-checkbox:checked');
+  addonCheckboxes.forEach(addon => {
+    const value = addon.value;
+    if (value === 'towel') extra += 50;
+    if (value === 'pool-regular') extra += 150 * guestCount;
+    if (value === 'pool-holiday') extra += 300 * guestCount;
+    if (value === 'parking') extra += 450 * nights;
+  });
 
   document.getElementById('total-display').textContent = '₱' + (roomTotal + extra).toLocaleString();
 }
-['checkin','checkout','addons','guests'].forEach(id => {
+['checkin','checkout','guests'].forEach(id => {
   const field = document.getElementById(id);
   if (field) field.addEventListener('change', updateTotal);
 });
+
+// Add listeners for multiple add-on checkboxes
+document.querySelectorAll('.addon-checkbox').forEach(checkbox => {
+  checkbox.addEventListener('change', updateTotal);
+});
+
+// Special Occasion Setup toggle
+const specialOccasionCheckbox = document.getElementById('special-occasion');
+const specialOccasionDetails = document.getElementById('special-occasion-details');
+if (specialOccasionCheckbox) {
+  specialOccasionCheckbox.addEventListener('change', () => {
+    specialOccasionDetails.style.display = specialOccasionCheckbox.checked ? 'block' : 'none';
+  });
+}
 
 function submitBooking() {
   if (!document.getElementById('fname').value || !document.getElementById('email').value) { alert('Please fill in your name and contact details.'); return; }
@@ -74,11 +93,54 @@ function submitBooking() {
   document.getElementById('modal-success').style.display = 'block';
 }
 
+// Auto-focus checkout when checkin is selected
+const checkinField = document.getElementById('checkin');
+const checkoutField = document.getElementById('checkout');
+if (checkinField && checkoutField) {
+  checkinField.addEventListener('change', () => {
+    if (checkinField.value) {
+      // Enable checkout and set minimum date to day after checkin
+      checkoutField.disabled = false;
+      const checkinDate = new Date(checkinField.value);
+      const minCheckout = new Date(checkinDate);
+      minCheckout.setDate(minCheckout.getDate() + 1);
+      checkoutField.min = minCheckout.toISOString().split('T')[0];
+      checkoutField.focus();
+      // Update flatpickr minDate
+      checkoutPickr.set('minDate', minCheckout);
+    } else {
+      checkoutField.disabled = true;
+      checkoutField.value = '';
+    }
+  });
+}
+
 const today = new Date().toISOString().split('T')[0];
-const checkin = document.getElementById('checkin');
-const checkout = document.getElementById('checkout');
-if (checkin) checkin.min = today;
-if (checkout) checkout.min = today;
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+const oneYearFromToday = new Date();
+oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() + 1);
+const maxDate = oneYearFromToday.toISOString().split('T')[0];
+
+// Initialize Flatpickr for Check-In
+const checkInPickr = flatpickr('#checkin', {
+  minDate: today,
+  maxDate: maxDate,
+  dateFormat: 'Y-m-d',
+  theme: 'dark',
+  onClose: () => {
+    if (checkinField.value) checkoutField.focus();
+  }
+});
+
+// Initialize Flatpickr for Check-Out
+const checkoutPickr = flatpickr('#checkout', {
+  minDate: today,
+  maxDate: maxDate,
+  dateFormat: 'Y-m-d',
+  theme: 'dark',
+  disabled: true
+});
 
 const galleryGrid = document.querySelector('.gallery-grid');
 
