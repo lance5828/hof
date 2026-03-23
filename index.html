@@ -27,13 +27,13 @@
 <div class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <div class="hero-badge"> 5★ RATED · VERIFIED PROPERTY</div>
+    <div class="hero-badge"> ⚜ HOME OF FRANCE</div>
     <h1>A Home Made with <em>LOVE</em></h1>
     <div class="hero-loc">📍 Tower 4 · 21st Floor · SMDC Wind Residences, Tagaytay</div>
     <p>Skyline / city view unit with unlimited WiFi, Netflix, PS4, mini karaoke, light cooking setup, and surprise room styling available for special occasions.</p>
     <div class="hero-actions">
       <button class="btn-primary" onclick="openModal(null)"> BOOK NOW</button>
-      <button class="btn-ghost" onclick="document.getElementById('gallery').scrollIntoView()">VIEW GALLERY</button>
+      <button class="btn-ghost" onclick="openGalleryPreview(0)">VIEW GALLERY</button>
     </div>
   </div>
   <div class="hero-stats">
@@ -182,7 +182,7 @@
     <div class="t-card">
       <div class="t-quote">"</div>
       <div class="t-stars">★★★★★</div>
-      <p class="t-text">I would like to commend for the cozy staycation we had. Our room is very neat with complete kitchenwares. Ambiance in the window po is super nakakarelax kasi in two mornings of stay namin talagang super fog sa Tagaytay, feels like Baguio talaga. 
+      <p class="t-text">I would like to recommend for the cozy staycation we had. Our room is very neat with complete kitchenwares. Ambiance in the window po is super nakakarelax kasi in two mornings of stay namin talagang super fog sa Tagaytay, feels like Baguio talaga. 
         We enjoy watching because may Netflix and free wifi access. Super naenjoy namin ang stay. So guys! Pabook na rin kayo sa kanila. ❤️❤️❤️</p>
       <div class="t-source">✓ Verified · Facebook</div>
       <div class="t-author"><div class="t-avatar">GM</div><div><div class="t-name">Gladys Belandres - Montero </div></div></div>
@@ -232,54 +232,105 @@
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div id="modal-form">
-      <h3>RESERVE YOUR STAY</h3>
-      <div class="modal-sub">Fill in your details and we'll confirm your booking within 24 hours via Facebook or email.</div>
-      <div class="modal-room" id="modal-room-info"></div>
-      <div class="form-row">
-        <div class="form-group"><label>First Name</label><input type="text" placeholder="Juan" id="fname"></div>
-        <div class="form-group"><label>Last Name</label><input type="text" placeholder="dela Cruz" id="lname"></div>
+      <div class="booking-steps">
+        <button type="button" id="step-chip-1" class="step-chip active" onclick="goToBookingStep(1)">1. Booking</button>
+        <button type="button" id="step-chip-2" class="step-chip" onclick="goToBookingStep(2)">2. Payment</button>
+        <button type="button" id="step-chip-3" class="step-chip" onclick="goToBookingStep(3)">3. Confirmation</button>
       </div>
-      <div class="form-group" style="margin-bottom:14px"><label>Email / Facebook</label><input type="text" placeholder="email or facebook.com/yourname" id="email"></div>
-      <div class="form-row" style="margin-top:0">
-        <div class="form-group"><label>Check-In</label><input type="date" id="checkin"></div>
-        <div class="form-group"><label>Check-Out</label><input type="date" id="checkout" disabled></div>
-      </div>
-      <div class="form-row" style="margin-top:0">
-        <div class="form-group"><label>Guests</label><select id="guests"><option value="1">1 Guest</option><option value="2" selected>2 Guests</option><option value="3">3 Guests</option><option value="4">4 Guests</option></select></div>
-      </div>
-      <div class="form-group" style="margin-bottom:20px">
-        <label style="display:block;margin-bottom:10px">Add-Ons</label>
-        <div style="display:flex;flex-direction:column;gap:8px">
+
+      <div id="booking-step-1" class="modal-step active">
+        <h3>RESERVE YOUR STAY</h3>
+        <div class="modal-sub">Step 1 of 3: Fill in your booking details before proceeding to payment.</div>
+        <div class="modal-room" id="modal-room-info"></div>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="Juan" id="fname"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="dela Cruz" id="lname"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px"><label>Email / Facebook</label><input type="text" placeholder="email or facebook.com/yourname" id="email"></div>
+        <div class="form-row" style="margin-top:0">
+          <div class="form-group"><label>Check-In</label><input type="date" id="checkin"></div>
+          <div class="form-group"><label>Check-Out</label><input type="date" id="checkout"></div>
+        </div>
+        <div class="form-row" style="margin-top:0">
+          <div class="form-group"><label>Guests</label><select id="guests"><option value="1">1 Guest</option><option value="2" selected>2 Guests</option><option value="3">3 Guests</option><option value="4">4 Guests</option></select></div>
+        </div>
+        <div class="form-group" style="margin-bottom:20px">
+          <label style="display:block;margin-bottom:10px">Add-Ons</label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" class="addon-checkbox" value="towel" style="width:16px;height:16px;cursor:pointer">
+              <span>Extra Towel (+₱50)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" class="addon-checkbox" value="pool-regular" style="width:16px;height:16px;cursor:pointer">
+              <span>Pool Access Regular (+₱150/person)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" class="addon-checkbox" value="pool-holiday" style="width:16px;height:16px;cursor:pointer">
+              <span>Pool Access Holiday (+₱300/person)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+              <input type="checkbox" class="addon-checkbox" value="parking" style="width:16px;height:16px;cursor:pointer">
+              <span>Basement Parking Request (+₱450/day)</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:20px">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" class="addon-checkbox" value="towel" style="width:16px;height:16px;cursor:pointer">
-            <span>Extra Towel (+₱50)</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" class="addon-checkbox" value="pool-regular" style="width:16px;height:16px;cursor:pointer">
-            <span>Pool Access Regular (+₱150/person)</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" class="addon-checkbox" value="pool-holiday" style="width:16px;height:16px;cursor:pointer">
-            <span>Pool Access Holiday (+₱300/person)</span>
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" class="addon-checkbox" value="parking" style="width:16px;height:16px;cursor:pointer">
-            <span>Basement Parking Request (+₱450/day)</span>
+            <input type="checkbox" id="special-occasion" class="addon-checkbox" style="width:16px;height:16px;cursor:pointer">
+            <span>Special Occasion Setup (Birthdays, Anniversaries, etc.)</span>
           </label>
         </div>
+        <div id="special-occasion-details" style="display:none;margin-bottom:20px">
+          <label>What kind of setup would you like?</label>
+          <textarea id="occasion-description" placeholder="Please describe your special occasion setup needs... Additional costs for the setup will be communicated.." style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.15);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;border-radius:4px;resize:vertical;min-height:80px;margin-top:8px"></textarea>
+        </div>
+        <div class="total-bar"><span class="total-label">Total Price</span><span class="total-amount" id="total-display">₱ —</span></div>
+        <div class="total-note" id="occasion-fee-note" style="display:none">Note: Total price excludes special occasion setup fee.</div>
+        <button class="submit-btn" onclick="submitBooking()">CONTINUE TO PAYMENT</button>
       </div>
-      <div class="form-group" style="margin-bottom:20px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-          <input type="checkbox" id="special-occasion" class="addon-checkbox" style="width:16px;height:16px;cursor:pointer">
-          <span>Special Occasion Setup (Birthdays, Anniversaries, etc.)</span>
-        </label>
+
+      <div id="booking-step-2" class="modal-step">
+        <h3>PAYMENT DETAILS</h3>
+        <div class="modal-sub">Step 2 of 3: Review your summary and send payment via GCash.</div>
+        <div class="payment-card">
+          <div class="payment-title">Booking Summary</div>
+          <div id="payment-summary" class="payment-summary"></div>
+          <div class="total-bar"><span class="total-label">Amount to Deposit</span><span class="total-amount" id="payment-deposit-display">₱ 1,000</span></div>
+          <div class="total-bar"><span class="total-label">Remaining Balance</span><span class="total-amount" id="payment-remaining-display">₱ —</span></div>
+          <div class="total-note" id="payment-occasion-fee-note" style="display:none">Note: Deposit and remaining balance exclude special occasion setup fee.</div>
+        </div>
+
+        <div class="payment-card">
+          <div class="payment-title">GCash Instructions</div>
+          <ol class="payment-instructions">
+            <li>Open GCash and choose Send Money.</li>
+            <li>Send the ₱1,000 deposit.</li>
+            <li>Take a screenshot of your payment receipt.</li>
+          </ol>
+          <div class="gcash-qr-placeholder">
+            <img class="gcash-qr-image" src="images/gcash.jpg" alt="GCash QR code for deposit payment">
+          </div>
+          <a class="download-qr-btn" href="images/gcash.jpg" download="gcash-qr.jpg">DOWNLOAD QR CODE</a>
+        </div>
+
+        <button class="submit-btn" onclick="goToProofStep()">I PAID, SUBMIT PROOF</button>
       </div>
-      <div id="special-occasion-details" style="display:none;margin-bottom:20px">
-        <label>What kind of setup would you like?</label>
-        <textarea id="occasion-description" placeholder="Please describe your special occasion setup needs..." style="width:100%;padding:10px;border:1px solid rgba(255,255,255,.15);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:.85rem;border-radius:4px;resize:vertical;min-height:80px;margin-top:8px"></textarea>
+
+      <div id="booking-step-3" class="modal-step">
+        <h3>PAYMENT CONFIRMATION</h3>
+        <div class="modal-sub">Step 3 of 3: Enter your GCash reference and upload proof of payment.</div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>GCash Reference Number</label>
+          <input type="text" id="gcash-reference" placeholder="e.g. 123456789012">
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Payment Screenshot</label>
+          <input type="file" id="payment-screenshot" accept="image/*">
+        </div>
+        <div class="proof-note">Accepted file types: JPG, PNG, HEIC. Please upload a clear screenshot.</div>
+        <button class="submit-btn" onclick="submitPaymentProof()">SUBMIT BOOKING PROOF</button>
       </div>
-      <div class="total-bar"><span class="total-label">Estimated Total</span><span class="total-amount" id="total-display">₱ —</span></div>
-      <button class="submit-btn" onclick="submitBooking()">CONFIRM RESERVATION</button>
     </div>
     <div class="success-msg" id="modal-success" style="display:none">
       <div class="success-icon">⚜</div>
@@ -288,6 +339,16 @@
       <button class="submit-btn" style="margin-top:28px" onclick="closeModal()">CLOSE</button>
     </div>
   </div>
+</div>
+
+<div class="lightbox-backdrop" id="gallery-lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close image preview">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">❮</button>
+  <div class="lightbox-stage">
+    <img id="lightbox-image" src="" alt="Gallery preview">
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">❯</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
