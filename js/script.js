@@ -6,7 +6,7 @@ var state = {
   checkout: '',
   guests: 1,
   addons: { towels: false, pool: 'none', parking: false },
-  name: '', email: '', phone: '', refNo: '', proofName: '',
+  name: '', email: '', phone: '', refNo: '', fbName: '',
   payMethod: 'gcash'
 };
 
@@ -99,12 +99,54 @@ function payNext() {
   state.step = 3;
   render();
 }
-function submitBooking() {
+var FORMSPREE_ENDPOINT = 'https://formspree.io/f/xykqnwpl';
+
+async function submitBooking() {
   clearError('step3Error');
-  if (!state.proofName) { return showError('step3Error', 'Please upload your payment receipt.'); }
   if (!state.refNo.trim()) { return showError('step3Error', 'Please enter your GCash reference number.'); }
-  state.submitted = true;
-  render();
+  if (!state.fbName.trim()) { return showError('step3Error', 'Please enter your Facebook name so we can find you on Messenger.'); }
+
+  var c = calc();
+  var fd = new FormData();
+  fd.append('_subject', 'New booking request — Home of France');
+  fd.append('name', state.name);
+  fd.append('email', state.email);
+  fd.append('phone', state.phone);
+  fd.append('facebook_name', state.fbName);
+  fd.append('checkin', state.checkin);
+  fd.append('checkout', state.checkout);
+  fd.append('nights', c.nights);
+  fd.append('guests', state.guests);
+  fd.append('towels', state.addons.towels ? 'yes' : 'no');
+  fd.append('parking', state.addons.parking ? 'yes' : 'no');
+  fd.append('pool', state.addons.pool);
+  fd.append('total', peso(c.total));
+  fd.append('payment_method', state.payMethod);
+  fd.append('gcash_reference', state.refNo);
+
+  var btn = document.getElementById('submitBookingBtn');
+  var originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  try {
+    var res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      body: fd,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      state.submitted = true;
+      render();
+    } else {
+      showError('step3Error', 'Something went wrong sending your booking. Please try again, or message us on Facebook.');
+    }
+  } catch (e) {
+    showError('step3Error', 'Something went wrong sending your booking. Please try again, or message us on Facebook.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
 }
 
 // ===== Render =====
@@ -210,16 +252,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('guestEmail').addEventListener('input', function (e) { state.email = e.target.value; });
   document.getElementById('guestPhone').addEventListener('input', function (e) { state.phone = e.target.value; });
   document.getElementById('refNo').addEventListener('input', function (e) { state.refNo = e.target.value; });
+  document.getElementById('fbName').addEventListener('input', function (e) { state.fbName = e.target.value; });
 
   document.getElementById('addonTowels').addEventListener('change', function (e) { state.addons.towels = e.target.checked; render(); });
   document.getElementById('addonParking').addEventListener('change', function (e) { state.addons.parking = e.target.checked; render(); });
   document.getElementById('addonPool').addEventListener('change', function (e) { state.addons.pool = e.target.value; render(); });
-
-  document.getElementById('proofFile').addEventListener('change', function (e) {
-    var f = e.target.files && e.target.files[0];
-    state.proofName = f ? f.name : '';
-    document.getElementById('proofLabel').textContent = state.proofName || 'Tap to upload receipt';
-  });
 
   // reveal on scroll
   var reveals = Array.prototype.slice.call(document.querySelectorAll('.hof-reveal'));

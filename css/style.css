@@ -63,6 +63,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .hof-location-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center; }
 .hof-map-wrap { position: relative; }
 .hof-map-frame { width: 100%; height: 520px; border: 0; border-radius: 20px; display: block; }
+.hof-map-directions { position: absolute; bottom: 16px; right: 16px; padding: 10px 18px; background: #fff; color: #1a1a1a; font-size: 13.5px; font-weight: 500; text-decoration: none; border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,.25); }
 .hof-nearby-row { display: flex; justify-content: space-between; align-items: baseline; padding: 20px 0; border-top: 1px solid rgba(255,255,255,.14); }
 .hof-nearby-row-last { border-bottom: 1px solid rgba(255,255,255,.14); }
 .hof-nearby-name { font-size: 17px; font-weight: 600; }
@@ -77,10 +78,11 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .hof-btn-primary { padding: 16px 40px; background: #5E1622; color: #fff; border: none; border-radius: 28px; font-size: 16px; font-weight: 500; cursor: pointer; }
 
 /* ===== FOOTER ===== */
-.hof-footer-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 48px; }
+.hof-footer-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr .8fr 1fr .8fr; gap: 48px; }
 .hof-footer-heading { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 16px; }
 .hof-footer-links { display: flex; flex-direction: column; gap: 11px; font-size: 14px; color: rgba(255,255,255,.8); }
 .hof-footer-links a { color: inherit; text-decoration: none; }
+.hof-footer-facts { display: flex; flex-direction: column; gap: 11px; font-size: 14px; color: rgba(255,255,255,.8); }
 .hof-social-icon { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; color: #fff; text-decoration: none; }
 .hof-footer-bottom { max-width: 1120px; margin: 56px auto 0; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; font-size: 12.5px; color: rgba(255,255,255,.4); }
 
@@ -128,6 +130,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
 .hof-trust-note a { color: #5E1622; font-weight: 600; }
 
 .hof-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1.5px dashed #cfcfcf; border-radius: 16px; padding: 34px; cursor: pointer; text-align: center; }
+.hof-messenger-note { display: flex; gap: 9px; align-items: center; margin-top: 16px; padding: 13px 15px; background: #fbf3f4; border: 1px solid #f0dfe1; border-radius: 12px; font-size: 13.5px; font-weight: 600; color: #5E1622; text-decoration: none; }
 
 .hof-done-check { width: 60px; height: 60px; border-radius: 50%; background: #5E1622; display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; }
 .hof-done-summary { text-align: left; max-width: 320px; margin: 0 auto; background: #FAFAF8; border: 1px solid #eee; border-radius: 14px; padding: 18px 20px; font-size: 14px; color: #3a3a3a; line-height: 1.9; }
@@ -139,7 +142,6 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .hof-hero-content h1 { font-size: 42px; }
   .hof-hero-content p { font-size: 17px; }
   .hof-hero-content { top: 100px; }
-  .hof-hero-stats { bottom: 60px; gap: 32px; }
   .hof-facts { grid-template-columns: repeat(2, 1fr); }
   .fact:nth-child(2) { border-right: none; }
   .hof-detail-row, .hof-location-grid, .hof-review-grid, .hof-footer-grid { grid-template-columns: 1fr; }
@@ -147,4 +149,12 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .hof-detail-row > div[style*="order:1"] { order: 2 !important; }
   .hof-amenity-grid { grid-template-columns: repeat(2, 1fr); }
   h2 { font-size: 38px !important; }
+}
+
+@media (max-width: 560px) {
+  .hof-nav-links a { display: none; }
+  .hof-nav-links { gap: 0; }
+  .hof-logo { font-size: 15px; }
+  .hof-modal-grid2 { grid-template-columns: 1fr !important; }
+  .hof-gcash-box { flex-direction: column; align-items: flex-start; }
 }

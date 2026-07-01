@@ -162,8 +162,9 @@
   <div class="hof-location-grid">
     <div class="hof-reveal hof-map-wrap">
       <iframe class="hof-map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps?q=SMDC+Wind+Residences+Tagaytay&output=embed"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=120.93816%2C14.09370%2C120.94816%2C14.10370&amp;layer=mapnik&amp;marker=14.09870%2C120.94316"
         title="Map to SMDC Wind Residences, Tagaytay"></iframe>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=SMDC+Wind+Residences+Tagaytay" target="_blank" rel="noopener" class="hof-map-directions">Get directions ›</a>
     </div>
     <div class="hof-reveal">
       <div class="hof-eyebrow">Getting around</div>
@@ -244,6 +245,16 @@
       </div>
     </div>
     <div>
+      <div class="hof-footer-heading">Good to know</div>
+      <div class="hof-footer-facts">
+        <div>Check-in: 2:00 PM</div>
+        <div>Check-out: 12:00 PM</div>
+        <div>Standard stay: 22 hours</div>
+        <div>Light cooking allowed</div>
+        <div>No smoking / vaping inside</div>
+      </div>
+    </div>
+    <div>
       <div class="hof-footer-heading">Get in touch</div>
       <div style="display:flex;gap:14px;margin-bottom:18px">
         <a href="https://www.facebook.com/homeoffrance?mibextid=LQQJ4d" target="_blank" rel="noopener" class="hof-social-icon" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.2 0-4 1.8-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8c0-.6.4-1 1-1z"></path></svg></a>
@@ -274,7 +285,7 @@
     <div id="step1" class="step-pane active">
       <div style="padding:24px 32px 30px">
         <h3 class="hof-modal-h">Your stay</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="hof-modal-grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           <div>
             <label class="hof-label">Check in</label>
             <input type="date" id="checkin" class="hof-input">
@@ -298,7 +309,7 @@
             <label class="hof-label">Full name</label>
             <input type="text" id="guestName" placeholder="Juan dela Cruz" class="hof-input">
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="hof-modal-grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
             <div>
               <label class="hof-label">Email</label>
               <input type="email" id="guestEmail" placeholder="you@email.com" class="hof-input">
@@ -374,7 +385,7 @@
               <div id="totalLabel3" style="font-size:24px;font-weight:600;color:#5E1622">—</div>
             </div>
           </div>
-          <div style="margin-top:16px;font-size:13px;color:#9a9a9a;line-height:1.5">Scan the QR in your GCash app or send to the number above, then upload your receipt on the next step.</div>
+          <div style="margin-top:16px;font-size:13px;color:#9a9a9a;line-height:1.5">Scan the QR in your GCash app or send to the number above, then send your GCash proof of payment screenshot on the next step.</div>
           <div class="hof-trust-note">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5E1622" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>
             <span>This GCash account is registered under an Australian number since bookings are managed from Australia — when you scan, the name <strong>HomeFrance</strong> will appear to confirm it's genuine. You can also verify us anytime on <a href="https://www.facebook.com/homeoffrance?mibextid=LQQJ4d" target="_blank" rel="noopener">Facebook</a> before sending payment.</span>
@@ -400,22 +411,24 @@
     <!-- STEP 3: PROOF -->
     <div id="step3" class="step-pane">
       <div style="padding:24px 32px 30px">
-        <h3 class="hof-modal-h" style="margin-bottom:6px">Proof of payment</h3>
-        <p style="margin:0 0 22px;font-size:14.5px;color:#6b6b6b;line-height:1.55">Upload your GCash receipt and reference number so we can confirm your booking.</p>
-        <label class="hof-upload">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5E1622" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
-          <span id="proofLabel" style="font-size:15px;font-weight:500;color:#1a1a1a">Tap to upload receipt</span>
-          <span style="font-size:12.5px;color:#9a9a9a">PNG or JPG receipt screenshot</span>
-          <input type="file" id="proofFile" accept="image/*" style="display:none">
-        </label>
-        <div style="margin-top:16px">
+        <h3 class="hof-modal-h" style="margin-bottom:6px">Confirm your payment</h3>
+        <p style="margin:0 0 22px;font-size:14.5px;color:#6b6b6b;line-height:1.55">Enter your GCash reference number, then send us your GCash proof of payment screenshot on Facebook Messenger so we can confirm your booking.</p>
+        <div>
           <label class="hof-label">GCash reference no.</label>
           <input type="text" id="refNo" placeholder="e.g. 0123 4567 8901" class="hof-input">
         </div>
+        <div style="margin-top:16px">
+          <label class="hof-label">Your Facebook name</label>
+          <input type="text" id="fbName" placeholder="So we can find you on Messenger" class="hof-input">
+        </div>
+        <a href="https://www.facebook.com/homeoffrance?mibextid=LQQJ4d" target="_blank" rel="noopener" class="hof-messenger-note">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5E1622" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+          <span>Send your proof of payment to our Facebook page ›</span>
+        </a>
         <div id="step3Error" class="hof-error" style="display:none"></div>
         <div class="hof-modal-footer">
           <button onclick="goBack()" class="hof-btn-back">‹ Back</button>
-          <button onclick="submitBooking()" class="hof-btn-continue">Submit booking</button>
+          <button id="submitBookingBtn" onclick="submitBooking()" class="hof-btn-continue">Submit booking</button>
         </div>
       </div>
     </div>
@@ -426,13 +439,14 @@
         <div class="hof-done-check">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"></path></svg>
         </div>
-        <h3 style="margin:0 0 10px;font-size:28px;letter-spacing:-.02em;font-weight:600">Booking requested</h3>
-        <p style="margin:0 auto 24px;max-width:340px;font-size:15px;line-height:1.6;color:#6b6b6b">Thanks, <span id="doneFirstName">traveler</span>. We'll confirm your reservation over Messenger or email within a few hours of checking your proof of payment.</p>
+        <h3 style="margin:0 0 10px;font-size:28px;letter-spacing:-.02em;font-weight:600">Almost there</h3>
+        <p style="margin:0 auto 24px;max-width:340px;font-size:15px;line-height:1.6;color:#6b6b6b">Thanks, <span id="doneFirstName">traveler</span>. One last step — send your proof of payment to our Facebook page and we'll confirm your reservation within a few hours.</p>
         <div class="hof-done-summary">
           <div style="display:flex;justify-content:space-between"><span style="color:#9a9a9a">Dates</span><span id="doneDates">—</span></div>
           <div style="display:flex;justify-content:space-between"><span style="color:#9a9a9a">Guests</span><span id="doneGuests">1</span></div>
           <div style="display:flex;justify-content:space-between"><span style="color:#9a9a9a">Total</span><span id="doneTotal" style="font-weight:600;color:#5E1622">—</span></div>
         </div>
+        <a href="https://www.facebook.com/homeoffrance?mibextid=LQQJ4d" target="_blank" rel="noopener" class="hof-btn-continue" style="display:inline-block;margin-top:22px;text-decoration:none">Send receipt on Messenger ›</a>
         <button onclick="closeModal()" class="hof-btn-done">Done</button>
       </div>
     </div>
