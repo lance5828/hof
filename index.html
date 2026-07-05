@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Home of France — Tagaytay Staycation | SMDC Wind Residences</title>
 <meta name="description" content="Studio staycation suite at SMDC Wind Residences, Tagaytay. Sweeping city views, free WiFi, Netflix, PS4. Weekday ₱2,200 · Weekend ₱2,500. Book directly.">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 
@@ -24,14 +24,14 @@
 <!-- ===================== HERO ===================== -->
 <section id="top" class="hof-hero">
   <div id="hof-hero-img-wrap" class="hof-hero-img-wrap">
-    <img src="images/hero-tagaytay-view.jpg" alt="Taal volcano and lake view from Tagaytay ridge" class="hof-hero-img">
+    <img src="images/hero-tagaytay-view.jpg" alt="Taal volcano and lake view from Tagaytay ridge" class="hof-hero-img" fetchpriority="high">
   </div>
   <div class="hof-hero-fade"></div>
   <div class="hof-hero-content">
-    <h1>Above it all, in Tagaytay</h1>
-    <p>Studio suite · Sweeping city views · From ₱2,200/night</p>
-    <div class="hof-hero-actions">
-      <button onclick="openModal()" class="hof-link-btn">Book your stay ›</button>
+    <h1 class="hof-fade-1">Above it all,<br>in <span class="hof-grad">Tagaytay</span></h1>
+    <p class="hof-fade-2">Studio suite · Sweeping city views · From ₱2,200/night</p>
+    <div class="hof-hero-actions hof-fade-3">
+      <button onclick="openModal()" class="hof-btn-hero">Book your stay</button>
       <a href="#suite" class="hof-link-a">See the suite ›</a>
     </div>
   </div>
@@ -41,12 +41,12 @@
 </section>
 
 <!-- ===================== STUDIO SUITE ===================== -->
-<section id="suite" class="hof-section" style="padding:130px 24px 110px;background:#FAFAF8">
+<section id="suite" class="hof-section">
   <div style="max-width:1120px;margin:0 auto">
-    <div class="hof-reveal" style="text-align:center;max-width:760px;margin:0 auto">
+    <div class="hof-reveal hof-section-head">
       <div class="hof-eyebrow">The Studio Suite</div>
-      <h2 style="margin:0;font-size:60px;line-height:1.05;letter-spacing:-.035em;font-weight:600">One room.<br>Every comfort.</h2>
-      <p style="margin:24px auto 0;max-width:520px;font-size:19px;line-height:1.6;color:#6b6b6b">A calm, light-filled studio designed for two — with room for four when you bring the family.</p>
+      <h2 class="hof-h2">One room.<br>Every comfort.</h2>
+      <p class="hof-lede">A calm, light-filled studio designed for two — with room for four when you bring the family.</p>
     </div>
 
     <!-- key facts -->
@@ -59,13 +59,13 @@
 
     <!-- suite hero image -->
     <div class="hof-reveal">
-      <img src="images/room-title.jpg" alt="Queen bed with Santorini artwork and LOVE sign above the headboard" class="hof-suite-hero-img" style="object-position:center 50%">
+      <img src="images/room-title.jpg" alt="Queen bed with Santorini artwork and LOVE sign above the headboard" class="hof-suite-hero-img" style="object-position:center 50%" loading="lazy" decoding="async">
     </div>
 
     <!-- detail sequence -->
-    <div style="display:flex;flex-direction:column;gap:96px;margin-top:120px">
+    <div class="hof-detail-seq">
       <div class="hof-reveal hof-detail-row">
-        <img src="images/featured-package-view.jpg" alt="Queen bed with crisp white linen" class="hof-detail-img" style="object-position:center 80%">
+        <img src="images/featured-package-view.jpg" alt="Queen bed with crisp white linen" class="hof-detail-img" style="object-position:center 80%" loading="lazy" decoding="async">
         <div>
           <div class="hof-eyebrow">Rest</div>
           <h3 class="hof-detail-h">A Queen bed dressed in crisp white linen.</h3>
@@ -75,7 +75,7 @@
 
       <div class="hof-reveal hof-detail-row">
         <div style="order:2">
-          <img src="images/entertainment-tv-ps4.jpg" alt="Wall-mounted smart TV with streaming apps and PS4 controllers" class="hof-detail-img" style="object-position:center 25%">
+          <img src="images/entertainment-tv-ps4.jpg" alt="Wall-mounted smart TV with streaming apps and PS4 controllers" class="hof-detail-img" style="object-position:center 25%" loading="lazy" decoding="async">
         </div>
         <div style="order:1">
           <div class="hof-eyebrow">Unwind</div>
@@ -85,7 +85,7 @@
       </div>
 
       <div class="hof-reveal hof-detail-row">
-        <img src="images/room-living-area.jpg" alt="Living area with sofa bed" class="hof-detail-img" style="object-position:center 75%">
+        <img src="images/room-living-area.jpg" alt="Living area with sofa bed" class="hof-detail-img" style="object-position:center 75%" loading="lazy" decoding="async">
         <div>
           <div class="hof-eyebrow">Gather</div>
           <h3 class="hof-detail-h">A sofa bed and dining nook for four.</h3>
@@ -98,22 +98,22 @@
 
 <!-- ===================== DARK VIEW BEAT ===================== -->
 <section class="hof-viewbeat">
-  <img src="images/city-views.jpeg" alt="City skyline view from the unit balcony" class="hof-viewbeat-img">
+  <img src="images/city-views.jpeg" alt="City skyline view from the unit balcony" class="hof-viewbeat-img" loading="lazy" decoding="async">
   <div class="hof-viewbeat-fade"></div>
   <div class="hof-reveal hof-viewbeat-content">
     <div class="hof-viewbeat-rule"></div>
-    <h2 style="margin:0 auto;max-width:820px;font-size:56px;line-height:1.08;letter-spacing:-.03em;font-weight:600;color:#fff">The view does the talking.</h2>
-    <p style="margin:20px auto 0;max-width:440px;font-size:18px;line-height:1.6;color:rgba(255,255,255,.78)">Sweeping city lights and open sky.</p>
+    <h2 class="hof-h2 hof-ondark">The view does the talking.</h2>
+    <p class="hof-lede">Sweeping city lights and open sky.</p>
   </div>
 </section>
 
 <!-- ===================== AMENITIES ===================== -->
-<section id="amenities" style="padding:130px 24px;background:#FAFAF8">
+<section id="amenities" class="hof-section hof-section-alt">
   <div style="max-width:1080px;margin:0 auto">
-    <div class="hof-reveal" style="text-align:center;max-width:640px;margin:0 auto 80px">
+    <div class="hof-reveal hof-section-head" style="margin-bottom:72px">
       <div class="hof-eyebrow">The Residence</div>
-      <h2 style="margin:0;font-size:60px;line-height:1.05;letter-spacing:-.035em;font-weight:600">Everything, included.</h2>
-      <p style="margin:22px auto 0;max-width:480px;font-size:19px;line-height:1.6;color:#6b6b6b">Full run of the SMDC Wind Residences resort, steps from your door.</p>
+      <h2 class="hof-h2">Everything, included.</h2>
+      <p class="hof-lede">Full run of the SMDC Wind Residences resort, steps from your door.</p>
     </div>
     <div class="hof-reveal hof-amenity-grid">
 
@@ -158,18 +158,18 @@
 </section>
 
 <!-- ===================== LOCATION ===================== -->
-<section id="location" style="padding:120px 24px;background:#111111;color:#fff">
+<section id="location" class="hof-section-dark">
   <div class="hof-location-grid">
     <div class="hof-reveal hof-map-wrap">
       <iframe class="hof-map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.openstreetmap.org/export/embed.html?bbox=120.93816%2C14.09370%2C120.94816%2C14.10370&amp;layer=mapnik&amp;marker=14.09870%2C120.94316"
-        title="Map to SMDC Wind Residences, Tagaytay"></iframe>
-      <a href="https://www.google.com/maps/search/?api=1&amp;query=SMDC+Wind+Residences+Tagaytay" target="_blank" rel="noopener" class="hof-map-directions">Get directions ›</a>
+        src="https://www.openstreetmap.org/export/embed.html?bbox=120.93785%2C14.09521%2C120.94785%2C14.10521&amp;layer=mapnik&amp;marker=14.10021%2C120.94285"
+        title="Map to Home of France Staycation - SMDC Wind Residences, Tagaytay City"></iframe>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=Home+of+France+Staycation+-+SMDC+Wind+Residences%2C+Tagaytay+City%2C+Cavite%2C+Philippines" target="_blank" rel="noopener" class="hof-map-directions">Get directions ›</a>
     </div>
     <div class="hof-reveal">
       <div class="hof-eyebrow">Getting around</div>
-      <h2 style="margin:0 0 8px;font-size:52px;line-height:1.06;letter-spacing:-.035em;font-weight:600">Minutes from everything.</h2>
-      <p style="margin:18px 0 34px;font-size:17px;line-height:1.6;color:rgba(255,255,255,.7);max-width:400px">Tagaytay's best sit just down the ridge. Approximate drive times below.</p>
+      <h2 class="hof-h2 hof-ondark">Minutes from everything.</h2>
+      <p class="hof-lede">Tagaytay's best sit just down the ridge. Approximate drive times below.</p>
       <div>
         <div class="hof-nearby-row">
           <div><div class="hof-nearby-name">Sky Ranch</div><div class="hof-nearby-sub">Amusement park &amp; Ferris wheel</div></div>
@@ -180,7 +180,7 @@
           <div class="hof-nearby-time">2 min</div>
         </div>
         <div class="hof-nearby-row">
-          <div><div class="hof-nearby-name">Starbucks</div><div class="hof-nearby-sub">Along the highway</div></div>
+          <div><div class="hof-nearby-name">Starbucks Hiraya</div><div class="hof-nearby-sub">Tagaytay's famous branch</div></div>
           <div class="hof-nearby-time">4 min</div>
         </div>
         <div class="hof-nearby-row">
@@ -197,11 +197,11 @@
 </section>
 
 <!-- ===================== REVIEWS ===================== -->
-<section id="reviews" style="padding:140px 24px;background:#FAFAF8">
+<section id="reviews" class="hof-section">
   <div style="max-width:900px;margin:0 auto;text-align:center">
     <div class="hof-reveal">
       <div class="hof-stars">★★★★★</div>
-      <blockquote style="margin:0;font-size:40px;line-height:1.28;letter-spacing:-.02em;font-weight:500;color:#1a1a1a">"...very relaxing, comfortable, really safe and awesome... very homey, very neat/clean, lots of amenities like Netflix, PS4, board games, fast internet connection and unit with a picturesque view."</blockquote>
+      <blockquote class="hof-quote">"...very relaxing, comfortable, really safe and awesome... very homey, very neat/clean, lots of amenities like Netflix, PS4, board games, fast internet connection and unit with a picturesque view."</blockquote>
       <div style="margin-top:30px;font-size:15px;color:#6b6b6b">Imee Gomez-Baybay · Verified Facebook review</div>
     </div>
     <div class="hof-reveal hof-review-grid">
@@ -220,10 +220,10 @@
 </section>
 
 <!-- ===================== BOOKING CTA ===================== -->
-<section style="padding:130px 24px;background:#FAFAF8;border-top:1px solid rgba(0,0,0,.08)">
-  <div class="hof-reveal" style="max-width:720px;margin:0 auto;text-align:center">
-    <h2 style="margin:0;font-size:64px;line-height:1.04;letter-spacing:-.035em;font-weight:600">Your stay is<br>waiting.</h2>
-    <p style="margin:22px auto 34px;max-width:440px;font-size:18px;line-height:1.6;color:#6b6b6b">Weekday ₱2,200 · Weekend ₱2,500 · up to 4 guests. Book in three quick steps.</p>
+<section class="hof-cta-section">
+  <div class="hof-reveal hof-cta-card">
+    <h2 class="hof-h2 hof-ondark">Your stay is<br>waiting.</h2>
+    <p class="hof-cta-sub">Weekday ₱2,200 · Weekend ₱2,500 · up to 4 guests. Book in three quick steps.</p>
     <button onclick="openModal()" class="hof-btn-primary">Book your stay</button>
   </div>
 </section>
@@ -376,7 +376,7 @@
         <!-- GCASH -->
         <div id="gcashPane" class="pay-pane active">
           <div class="hof-gcash-box">
-            <img src="images/gcash.jpg" alt="GCash QR code" class="hof-gcash-qr">
+            <img src="images/gcash.jpg" alt="GCash QR code" class="hof-gcash-qr" loading="lazy" decoding="async">
             <div>
               <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9a9a9a;margin-bottom:4px">GCash · HomeFrance</div>
               <div style="font-size:22px;font-weight:600;letter-spacing:-.01em">+61 480 747 326</div>
