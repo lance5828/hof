@@ -152,6 +152,7 @@ function payNext() {
   render();
 }
 var FORMSPREE_ENDPOINT = 'https://formspree.io/f/xykqnwpl';
+var TELEGRAM_NOTIFY_ENDPOINT = 'https://hof-notify.hofstaycation.workers.dev/';
 
 async function submitBooking() {
   clearError('step3Error');
@@ -159,22 +160,33 @@ async function submitBooking() {
   if (!state.fbName.trim()) { return showError('step3Error', 'Please enter your Facebook name so we can find you on Messenger.'); }
 
   var c = calc();
+  var bookingData = {
+    name: state.name,
+    email: state.email,
+    phone: state.phone,
+    facebook_name: state.fbName,
+    checkin: state.checkin,
+    checkout: state.checkout,
+    nights: c.nights,
+    guests: state.guests,
+    towels: state.addons.towels ? 'yes' : 'no',
+    parking: state.addons.parking ? 'yes' : 'no',
+    pool: state.addons.pool,
+    total: peso(c.total),
+    payment_method: state.payMethod,
+    gcash_reference: state.refNo
+  };
+
+  // Instant Telegram push — best-effort, never blocks the booking on failure.
+  fetch(TELEGRAM_NOTIFY_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(bookingData)
+  }).catch(function () { /* Formspree below remains the reliable record either way */ });
+
   var fd = new FormData();
   fd.append('_subject', 'New booking request — Home of France');
-  fd.append('name', state.name);
-  fd.append('email', state.email);
-  fd.append('phone', state.phone);
-  fd.append('facebook_name', state.fbName);
-  fd.append('checkin', state.checkin);
-  fd.append('checkout', state.checkout);
-  fd.append('nights', c.nights);
-  fd.append('guests', state.guests);
-  fd.append('towels', state.addons.towels ? 'yes' : 'no');
-  fd.append('parking', state.addons.parking ? 'yes' : 'no');
-  fd.append('pool', state.addons.pool);
-  fd.append('total', peso(c.total));
-  fd.append('payment_method', state.payMethod);
-  fd.append('gcash_reference', state.refNo);
+  Object.keys(bookingData).forEach(function (k) { fd.append(k, bookingData[k]); });
 
   var btn = document.getElementById('submitBookingBtn');
   var originalLabel = btn.textContent;
