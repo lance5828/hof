@@ -6,6 +6,7 @@
 <title>Home of France — Tagaytay Staycation | SMDC Wind Residences</title>
 <meta name="description" content="Studio staycation suite at SMDC Wind Residences, Tagaytay. Sweeping city views, free WiFi, Netflix, PS4. Weekday ₱2,200 · Weekend ₱2,500. Book directly.">
 <link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
 
@@ -287,13 +288,14 @@
         <div class="hof-modal-grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
           <div>
             <label class="hof-label">Check in</label>
-            <input type="date" id="checkin" class="hof-input">
+            <input type="text" id="checkin" class="hof-input" placeholder="Select date" readonly autocomplete="off">
           </div>
           <div>
             <label class="hof-label">Check out</label>
-            <input type="date" id="checkout" class="hof-input">
+            <input type="text" id="checkout" class="hof-input" placeholder="Select date" readonly autocomplete="off">
           </div>
         </div>
+        <div style="margin-top:8px;font-size:12.5px;color:#9a9a9a">Greyed-out dates are already booked on Airbnb, Booking.com, or directly with us.</div>
         <div style="margin-top:16px">
           <label class="hof-label">Guests</label>
           <div class="hof-guest-stepper">
@@ -453,6 +455,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="js/script.js"></script>
 </body>
 </html>

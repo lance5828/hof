@@ -1,0 +1,4 @@
+{
+  "_comment": "Manually blocked dates for bookings made outside this website (e.g. Facebook Messenger). Add one entry per booking below. 'start' is the check-in date, 'end' is the check-out date (end is NOT blocked, since a new guest can check in that day). Example: {\"start\": \"2026-08-01\", \"end\": \"2026-08-03\", \"source\": \"Facebook Messenger\", \"note\": \"Juan Dela Cruz\"}",
+  "blocks": []
+}

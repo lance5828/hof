@@ -1,0 +1,35 @@
+name: Sync booking calendar
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # every 30 minutes
+  workflow_dispatch: {}     # allows manual "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch and merge iCal feeds
+        env:
+          AIRBNB_ICAL_URL: ${{ secrets.AIRBNB_ICAL_URL }}
+          BOOKINGCOM_ICAL_URL: ${{ secrets.BOOKINGCOM_ICAL_URL }}
+          AGODA_ICAL_URL: ${{ secrets.AGODA_ICAL_URL }}
+          GOOGLE_CALENDAR_ICAL_URL: ${{ secrets.GOOGLE_CALENDAR_ICAL_URL }}
+        run: node .github/scripts/sync-calendar.js
+
+      - name: Commit updated calendar if changed
+        run: |
+          git config user.name "calendar-sync-bot"
+          git config user.email "actions@github.com"
+          git add data/synced-blocks.json
+          git diff --staged --quiet || git commit -m "Sync booking calendar"
+          git push

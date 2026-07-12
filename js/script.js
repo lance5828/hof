@@ -12,6 +12,57 @@ var state = {
 
 function peso(n) { return '₱' + n.toLocaleString('en-PH'); }
 
+// ===== Availability (blocked dates from other booking channels) =====
+var blockedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD', source:'...'}] — end is checkout day, exclusive
+
+// Formats a Date using its LOCAL calendar fields — toISOString() converts to UTC first,
+// which silently shifts the date by a day in positive-UTC-offset timezones.
+function toLocalDateStr(d) {
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+function addDays(dateStr, n) {
+  var d = new Date(dateStr + 'T00:00');
+  d.setDate(d.getDate() + n);
+  return toLocalDateStr(d);
+}
+
+// True if any night in [checkinStr, checkoutStr) overlaps a blocked range.
+function rangeOverlapsBlocked(checkinStr, checkoutStr) {
+  var a = new Date(checkinStr + 'T00:00');
+  var b = new Date(checkoutStr + 'T00:00');
+  return blockedRanges.some(function (r) {
+    var rs = new Date(r.start + 'T00:00');
+    var re = new Date(r.end + 'T00:00');
+    return a < re && b > rs; // standard interval overlap check
+  });
+}
+
+async function loadAvailability() {
+  try {
+    var results = await Promise.all([
+      fetch('data/manual-blocks.json').then(function (r) { return r.json(); }).catch(function () { return { blocks: [] }; }),
+      fetch('data/synced-blocks.json').then(function (r) { return r.json(); }).catch(function () { return { blocks: [] }; })
+    ]);
+    var manual = results[0].blocks || [];
+    var synced = results[1].blocks || [];
+    blockedRanges = manual.concat(synced);
+  } catch (e) {
+    blockedRanges = [];
+  }
+  return flatpickrDisableRanges();
+}
+
+// Flatpickr's range "to" is inclusive, so we subtract a day from our exclusive checkout-day convention.
+function flatpickrDisableRanges() {
+  return blockedRanges.map(function (r) {
+    return { from: r.start, to: addDays(r.end, -1) };
+  });
+}
+
 function calc() {
   var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, pool: 0, parking: 0, total: 0, valid: false };
   if (!state.checkin || !state.checkout) return empty;
@@ -81,6 +132,7 @@ function goNext() {
   var c = calc();
   if (!state.checkin || !state.checkout) { return showError('step1Error', 'Please choose your check-in and check-out dates.'); }
   if (c.nights <= 0) { return showError('step1Error', 'Check-out must be after check-in.'); }
+  if (rangeOverlapsBlocked(state.checkin, state.checkout)) { return showError('step1Error', 'Sorry, some of those dates are already booked. Please choose different dates.'); }
   if (!state.name.trim()) { return showError('step1Error', 'Please enter your full name.'); }
   if (!/.+@.+\..+/.test(state.email)) { return showError('step1Error', 'Please enter a valid email address.'); }
   if (state.phone.replace(/\D/g, '').length < 7) { return showError('step1Error', 'Please enter a valid mobile number.'); }
@@ -230,23 +282,47 @@ function render() {
 }
 
 // ===== Wire up inputs =====
-document.addEventListener('DOMContentLoaded', function () {
-  var today = new Date().toISOString().slice(0, 10);
+document.addEventListener('DOMContentLoaded', async function () {
+  var today = toLocalDateStr(new Date());
   var checkinEl = document.getElementById('checkin');
   var checkoutEl = document.getElementById('checkout');
-  checkinEl.min = today;
-  checkoutEl.min = today;
 
-  checkinEl.addEventListener('change', function (e) {
-    state.checkin = e.target.value;
-    if (state.checkin) {
-      var next = new Date(state.checkin + 'T00:00');
-      next.setDate(next.getDate() + 1);
-      checkoutEl.min = next.toISOString().slice(0, 10);
+  var disableRanges = await loadAvailability();
+
+  var checkoutPicker = flatpickr(checkoutEl, {
+    dateFormat: 'Y-m-d',
+    altInput: true,
+    altInputClass: 'hof-input',
+    altFormat: 'M j, Y',
+    minDate: today,
+    disable: disableRanges,
+    onChange: function (selectedDates, dateStr) {
+      state.checkout = dateStr;
+      render();
     }
-    render();
   });
-  checkoutEl.addEventListener('change', function (e) { state.checkout = e.target.value; render(); });
+  checkoutPicker.altInput.id = 'checkoutDisplay';
+
+  var checkinPicker = flatpickr(checkinEl, {
+    dateFormat: 'Y-m-d',
+    altInput: true,
+    altInputClass: 'hof-input',
+    altFormat: 'M j, Y',
+    minDate: today,
+    disable: disableRanges,
+    onChange: function (selectedDates, dateStr) {
+      state.checkin = dateStr;
+      if (dateStr) {
+        checkoutPicker.set('minDate', addDays(dateStr, 1));
+        if (state.checkout && new Date(state.checkout + 'T00:00') <= new Date(dateStr + 'T00:00')) {
+          state.checkout = '';
+          checkoutPicker.clear();
+        }
+      }
+      render();
+    }
+  });
+  checkinPicker.altInput.id = 'checkinDisplay';
 
   document.getElementById('guestName').addEventListener('input', function (e) { state.name = e.target.value; });
   document.getElementById('guestEmail').addEventListener('input', function (e) { state.email = e.target.value; });
