@@ -136,6 +136,8 @@ function openModal() {
   document.getElementById('bookingModal').classList.add('open');
   document.body.style.overflow = 'hidden';
   render();
+  gtag('event', 'begin_checkout');
+  fbq('track', 'InitiateCheckout');
 }
 function closeModal() {
   document.getElementById('bookingModal').classList.remove('open');
@@ -178,6 +180,10 @@ function goNext() {
   if (state.phone.replace(/\D/g, '').length < 7) { return showError('step1Error', 'Please enter a valid mobile number.'); }
   state.step = 2;
   render();
+  gtag('event', 'add_booking_info');
+  fbq('trackCustom', 'AddBookingInfo');
+  gtag('event', 'add_payment_info');
+  fbq('track', 'AddPaymentInfo');
 }
 function goBack() {
   state.step = Math.max(1, state.step - 1);
@@ -190,6 +196,8 @@ function payNext() {
   clearError('step2Error');
   state.step = 3;
   render();
+  gtag('event', 'generate_lead');
+  fbq('track', 'Lead');
 }
 var FORMSPREE_ENDPOINT = 'https://formspree.io/f/xykqnwpl';
 var TELEGRAM_NOTIFY_ENDPOINT = 'https://hof-notify.hofstaycation.workers.dev/';
@@ -242,6 +250,8 @@ async function submitBooking() {
     if (res.ok) {
       state.submitted = true;
       render();
+      gtag('event', 'generate_lead');
+      fbq('track', 'Lead');
     } else {
       showError('step3Error', 'Something went wrong sending your booking. Please try again, or message us on Facebook.');
     }
