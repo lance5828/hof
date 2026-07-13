@@ -5,7 +5,7 @@ var state = {
   checkin: '',
   checkout: '',
   guests: 1,
-  addons: { towels: false, pool: 'none', parking: false },
+  addons: { towels: false, pool: false, parking: false },
   name: '', email: '', phone: '', refNo: '', fbName: '',
   payMethod: 'gcash'
 };
@@ -63,6 +63,45 @@ function flatpickrDisableRanges() {
   });
 }
 
+// Official Philippine regular + special non-working holidays for 2026, per Proclamation 1006.
+// Eid'l Fitr and Eid'l Adha aren't included yet — those get proclaimed closer to their lunar
+// dates each year. This list needs a yearly refresh once the next year's proclamation is out.
+var PH_HOLIDAYS = [
+  '2026-01-01', // New Year's Day
+  '2026-02-17', // Chinese New Year
+  '2026-04-02', // Maundy Thursday
+  '2026-04-03', // Good Friday
+  '2026-04-04', // Black Saturday
+  '2026-04-09', // Araw ng Kagitingan
+  '2026-05-01', // Labor Day
+  '2026-06-12', // Independence Day
+  '2026-08-21', // Ninoy Aquino Day
+  '2026-08-31', // National Heroes Day
+  '2026-11-01', // All Saints' Day
+  '2026-11-02', // All Souls' Day
+  '2026-11-30', // Bonifacio Day
+  '2026-12-08', // Feast of the Immaculate Conception
+  '2026-12-24', // Christmas Eve
+  '2026-12-25', // Christmas Day
+  '2026-12-30', // Rizal Day
+  '2026-12-31'  // Last Day of the Year
+];
+
+function isPHHoliday(dateStr) {
+  return PH_HOLIDAYS.indexOf(dateStr) !== -1;
+}
+
+// True if any night of the stay falls on a PH holiday — used to auto-apply holiday pool pricing.
+function stayIncludesHoliday(checkinStr, nights) {
+  var d = new Date(checkinStr + 'T00:00');
+  for (var i = 0; i < nights; i++) {
+    var cur = new Date(d);
+    cur.setDate(d.getDate() + i);
+    if (isPHHoliday(toLocalDateStr(cur))) { return true; }
+  }
+  return false;
+}
+
 function calc() {
   var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, pool: 0, parking: 0, total: 0, valid: false };
   if (!state.checkin || !state.checkout) return empty;
@@ -83,10 +122,11 @@ function calc() {
   var discount = nights > 1 ? 100 * nights : 0;
   var extraGuest = Math.max(0, guests - 2) * 200;
   var towels = ad.towels ? 50 : 0;
-  var pool = ad.pool === 'holiday' ? 300 * guests : (ad.pool === 'regular' ? 150 * guests : 0);
+  var poolIsHoliday = stayIncludesHoliday(state.checkin, nights);
+  var pool = ad.pool ? (poolIsHoliday ? 300 : 150) * guests : 0;
   var parking = ad.parking ? 450 * nights : 0;
   var total = room - discount + extraGuest + towels + pool + parking;
-  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, pool: pool, parking: parking, total: total, valid: true, guests: guests };
+  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, pool: pool, poolIsHoliday: poolIsHoliday, parking: parking, total: total, valid: true, guests: guests };
 }
 
 // ===== Modal open/close =====
@@ -171,7 +211,7 @@ async function submitBooking() {
     guests: state.guests,
     towels: state.addons.towels ? 'yes' : 'no',
     parking: state.addons.parking ? 'yes' : 'no',
-    pool: state.addons.pool,
+    pool: state.addons.pool ? (c.poolIsHoliday ? 'yes (holiday rate)' : 'yes (regular rate)') : 'no',
     total: peso(c.total),
     payment_method: state.payMethod,
     gcash_reference: state.refNo
@@ -246,6 +286,7 @@ function render() {
 
   var nightsWord = c.nights > 1 ? ' nights' : ' night';
   document.getElementById('parkingHint').textContent = c.valid && c.nights > 0 ? ('₱450 × ' + c.nights + nightsWord) : '₱450 / night';
+  document.getElementById('poolHint').textContent = c.valid && c.nights > 0 ? (c.poolIsHoliday ? '₱300/guest (holiday)' : '₱150/guest') : '₱150/guest';
 
   // price breakdown
   document.getElementById('priceRows').style.display = c.valid ? 'flex' : 'none';
@@ -268,7 +309,7 @@ function render() {
 
     document.getElementById('poolRow').style.display = c.pool > 0 ? 'flex' : 'none';
     if (c.pool > 0) {
-      var poolDesc = state.addons.pool === 'holiday' ? 'Pool access (holiday)' : 'Pool access';
+      var poolDesc = c.poolIsHoliday ? 'Pool access (holiday rate)' : 'Pool access';
       document.getElementById('poolRowLabel').textContent = poolDesc + ' · ' + state.guests;
       document.getElementById('poolLabel').textContent = '+' + peso(c.pool);
     }
@@ -344,7 +385,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   document.getElementById('addonTowels').addEventListener('change', function (e) { state.addons.towels = e.target.checked; render(); });
   document.getElementById('addonParking').addEventListener('change', function (e) { state.addons.parking = e.target.checked; render(); });
-  document.getElementById('addonPool').addEventListener('change', function (e) { state.addons.pool = e.target.value; render(); });
+  document.getElementById('addonPool').addEventListener('change', function (e) { state.addons.pool = e.target.checked; render(); });
 
   // reveal on scroll
   var reveals = Array.prototype.slice.call(document.querySelectorAll('.hof-reveal'));
