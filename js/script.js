@@ -102,8 +102,10 @@ function stayIncludesHoliday(checkinStr, nights) {
   return false;
 }
 
+var DEPOSIT_AMOUNT = 1000; // flat deposit collected at booking; remainder due at check-in
+
 function calc() {
-  var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, pool: 0, parking: 0, total: 0, valid: false };
+  var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, pool: 0, parking: 0, total: 0, deposit: 0, balance: 0, valid: false };
   if (!state.checkin || !state.checkout) return empty;
   var a = new Date(state.checkin + 'T00:00');
   var b = new Date(state.checkout + 'T00:00');
@@ -124,9 +126,11 @@ function calc() {
   var towels = ad.towels ? 50 : 0;
   var poolIsHoliday = stayIncludesHoliday(state.checkin, nights);
   var pool = ad.pool ? (poolIsHoliday ? 300 : 150) * guests : 0;
-  var parking = ad.parking ? 450 * nights : 0;
+  var parking = ad.parking ? 500 * nights : 0;
   var total = room - discount + extraGuest + towels + pool + parking;
-  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, pool: pool, poolIsHoliday: poolIsHoliday, parking: parking, total: total, valid: true, guests: guests };
+  var deposit = Math.min(DEPOSIT_AMOUNT, total);
+  var balance = total - deposit;
+  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, pool: pool, poolIsHoliday: poolIsHoliday, parking: parking, total: total, deposit: deposit, balance: balance, valid: true, guests: guests };
 }
 
 // ===== Modal open/close =====
@@ -221,6 +225,8 @@ async function submitBooking() {
     parking: state.addons.parking ? 'yes' : 'no',
     pool: state.addons.pool ? (c.poolIsHoliday ? 'yes (holiday rate)' : 'yes (regular rate)') : 'no',
     total: peso(c.total),
+    deposit_paid: peso(c.deposit),
+    balance_due_at_checkin: peso(c.balance),
     payment_method: state.payMethod,
     gcash_reference: state.refNo
   };
@@ -290,12 +296,15 @@ function render() {
   document.getElementById('guestsLabel').textContent = state.guests;
 
   var totalLabel = c.valid ? peso(c.total) : '—';
-  document.getElementById('totalLabel1').textContent = totalLabel;
-  document.getElementById('totalLabel2').textContent = totalLabel;
-  document.getElementById('totalLabel3').textContent = totalLabel;
+  var depositStr = c.valid ? peso(c.deposit) : '—';
+  var balanceStr = c.valid ? peso(c.balance) : '—';
+  document.getElementById('totalLabel1').textContent = depositStr;
+  document.getElementById('totalLabel2').textContent = depositStr;
+  document.getElementById('totalLabel3').textContent = depositStr;
+  document.getElementById('balanceLabel2').textContent = balanceStr;
 
   var nightsWord = c.nights > 1 ? ' nights' : ' night';
-  document.getElementById('parkingHint').textContent = c.valid && c.nights > 0 ? ('₱450 × ' + c.nights + nightsWord) : '₱450 / night';
+  document.getElementById('parkingHint').textContent = c.valid && c.nights > 0 ? ('₱500 × ' + c.nights + nightsWord) : '₱500 / night';
   document.getElementById('poolHint').textContent = c.valid && c.nights > 0 ? (c.poolIsHoliday ? '₱300/guest (holiday)' : '₱150/guest') : '₱150/guest';
 
   // price breakdown
@@ -326,9 +335,13 @@ function render() {
 
     document.getElementById('parkingRow').style.display = c.parking > 0 ? 'flex' : 'none';
     if (c.parking > 0) {
-      document.getElementById('parkingRowLabel').textContent = 'Parking · ' + c.nights + nightsWord;
+      document.getElementById('parkingRowLabel').textContent = 'Basement parking · ' + c.nights + nightsWord;
       document.getElementById('parkingLabel').textContent = '+' + peso(c.parking);
     }
+
+    document.getElementById('grandTotalLabel').textContent = totalLabel;
+    document.getElementById('depositLabel').textContent = depositStr;
+    document.getElementById('balanceLabel').textContent = balanceStr;
   }
 
   // done screen
@@ -341,6 +354,8 @@ function render() {
     document.getElementById('doneDates').textContent = datesLabel;
     document.getElementById('doneGuests').textContent = state.guests;
     document.getElementById('doneTotal').textContent = totalLabel;
+    document.getElementById('doneDeposit').textContent = depositStr;
+    document.getElementById('doneBalance').textContent = balanceStr;
   }
 }
 

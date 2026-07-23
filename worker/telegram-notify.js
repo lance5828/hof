@@ -29,6 +29,8 @@ function formatBookingMessage(d) {
     '📅 ' + (d.checkin || '—') + ' → ' + (d.checkout || '—') + ' (' + (d.nights || '—') + ' nights)',
     '👥 ' + (d.guests || '—') + ' guest(s)',
     '💰 Total: ' + (d.total || '—'),
+    '💵 Deposit paid: ' + (d.deposit_paid || '—'),
+    '🏷 Balance at check-in: ' + (d.balance_due_at_checkin || '—'),
     '',
     '💳 Payment: ' + (d.payment_method || '—'),
     '📎 GCash ref: ' + (d.gcash_reference || '—')
