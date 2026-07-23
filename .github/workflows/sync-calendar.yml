@@ -31,5 +31,22 @@ jobs:
           git config user.name "calendar-sync-bot"
           git config user.email "actions@github.com"
           git add data/synced-blocks.json
-          git diff --staged --quiet || git commit -m "Sync booking calendar"
-          git push
+          git diff --staged --quiet && exit 0
+
+          # synced-blocks.json is fully regenerated each run (not a patch), so if the
+          # push gets rejected because the remote moved on (a manual push, or another
+          # run), there's nothing to merge line-by-line — our freshly-computed content
+          # is already correct and should just win. Reset onto the new tip and
+          # re-commit it there instead of attempting a rebase/merge.
+          for i in 1 2 3 4 5; do
+            git commit -m "Sync booking calendar"
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected, retrying (attempt $i)…"
+            git fetch origin main
+            git reset --soft origin/main
+            git add data/synced-blocks.json
+          done
+          echo "Failed to push after retries."
+          exit 1
