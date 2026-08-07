@@ -5,7 +5,8 @@ var state = {
   checkin: '',
   checkout: '',
   guests: 1,
-  addons: { towels: false, pool: false, parking: false },
+  addons: { towels: false, parking: false },
+  promoCode: '',
   name: '', email: '', phone: '', refNo: '', fbName: '',
   payMethod: 'gcash'
 };
@@ -91,7 +92,8 @@ function isPHHoliday(dateStr) {
   return PH_HOLIDAYS.indexOf(dateStr) !== -1;
 }
 
-// True if any night of the stay falls on a PH holiday — used to auto-apply holiday pool pricing.
+// True if any night of the stay falls on a PH holiday. Currently unused — the pool
+// add-on that priced off it has been removed — but kept for future holiday rates.
 function stayIncludesHoliday(checkinStr, nights) {
   var d = new Date(checkinStr + 'T00:00');
   for (var i = 0; i < nights; i++) {
@@ -104,8 +106,27 @@ function stayIncludesHoliday(checkinStr, nights) {
 
 var DEPOSIT_AMOUNT = 1000; // flat deposit collected at booking; remainder due at check-in
 
+// Promo codes, keyed by what the guest types. `percent` comes off the whole
+// booking — room, extra guests, and add-ons included.
+//
+// These ship inside the site's public JavaScript, so anyone who opens View Source
+// can read them. A code here is unguessable, not secret: keep 100%-off codes to
+// internal testing, and change the code if it ever gets out.
+var PROMO_CODES = {
+  'HOFTEST-4K9X': { percent: 100, label: 'Test booking' }
+};
+
+// Codes are matched case-insensitively, ignoring surrounding and internal spaces,
+// so a code pasted from a phone keyboard still lands.
+function lookupPromo(raw) {
+  var key = (raw || '').replace(/\s+/g, '').toUpperCase();
+  if (!key) return null;
+  var def = PROMO_CODES[key];
+  return def ? { code: key, percent: def.percent, label: def.label } : null;
+}
+
 function calc() {
-  var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, pool: 0, parking: 0, total: 0, deposit: 0, balance: 0, valid: false };
+  var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, parking: 0, promo: 0, promoCode: '', total: 0, deposit: 0, balance: 0, valid: false };
   if (!state.checkin || !state.checkout) return empty;
   var a = new Date(state.checkin + 'T00:00');
   var b = new Date(state.checkout + 'T00:00');
@@ -122,15 +143,18 @@ function calc() {
     room += (day === 5 || day === 6) ? 2500 : 2200;
   }
   var discount = nights > 1 ? 100 * nights : 0;
-  var extraGuest = Math.max(0, guests - 2) * 200;
+  var extraGuest = Math.max(0, guests - 2) * 200 * nights;
   var towels = ad.towels ? 50 : 0;
-  var poolIsHoliday = stayIncludesHoliday(state.checkin, nights);
-  var pool = ad.pool ? (poolIsHoliday ? 300 : 150) * guests : 0;
   var parking = ad.parking ? 500 * nights : 0;
-  var total = room - discount + extraGuest + towels + pool + parking;
+  var subtotal = room - discount + extraGuest + towels + parking;
+
+  var promoDef = lookupPromo(state.promoCode);
+  var promo = promoDef ? Math.round(subtotal * promoDef.percent / 100) : 0;
+
+  var total = subtotal - promo;
   var deposit = Math.min(DEPOSIT_AMOUNT, total);
   var balance = total - deposit;
-  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, pool: pool, poolIsHoliday: poolIsHoliday, parking: parking, total: total, deposit: deposit, balance: balance, valid: true, guests: guests };
+  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, parking: parking, subtotal: subtotal, promo: promo, promoCode: promoDef ? promoDef.code : '', promoPercent: promoDef ? promoDef.percent : 0, total: total, deposit: deposit, balance: balance, valid: true, guests: guests };
 }
 
 // ===== Modal open/close =====
@@ -223,7 +247,7 @@ async function submitBooking() {
     guests: state.guests,
     towels: state.addons.towels ? 'yes' : 'no',
     parking: state.addons.parking ? 'yes' : 'no',
-    pool: state.addons.pool ? (c.poolIsHoliday ? 'yes (holiday rate)' : 'yes (regular rate)') : 'no',
+    promo_code: c.promo > 0 ? (c.promoCode + ' · ' + c.promoPercent + '% off, −' + peso(c.promo)) : 'none',
     total: peso(c.total),
     deposit_paid: peso(c.deposit),
     balance_due_at_checkin: peso(c.balance),
@@ -305,7 +329,24 @@ function render() {
 
   var nightsWord = c.nights > 1 ? ' nights' : ' night';
   document.getElementById('parkingHint').textContent = c.valid && c.nights > 0 ? ('₱500 × ' + c.nights + nightsWord) : '₱500 / night';
-  document.getElementById('poolHint').textContent = c.valid && c.nights > 0 ? (c.poolIsHoliday ? '₱300/guest (holiday)' : '₱150/guest') : '₱150/guest';
+
+  // Promo feedback resolves off the typed code alone, so it confirms a valid code
+  // even before dates are picked (calc() has no total to discount until then).
+  var typedPromo = lookupPromo(state.promoCode);
+  var promoHintEl = document.getElementById('promoHint');
+  if (!state.promoCode.trim()) {
+    promoHintEl.style.display = 'none';
+  } else if (typedPromo) {
+    promoHintEl.style.display = 'block';
+    promoHintEl.style.color = '#5E1622';
+    promoHintEl.style.fontWeight = '600';
+    promoHintEl.textContent = 'Code applied · ' + typedPromo.percent + '% off your stay';
+  } else {
+    promoHintEl.style.display = 'block';
+    promoHintEl.style.color = '#a8323f';
+    promoHintEl.style.fontWeight = '500';
+    promoHintEl.textContent = "That code isn't valid.";
+  }
 
   // price breakdown
   document.getElementById('priceRows').style.display = c.valid ? 'flex' : 'none';
@@ -319,24 +360,23 @@ function render() {
 
     document.getElementById('extraRow').style.display = c.extraGuest > 0 ? 'flex' : 'none';
     if (c.extraGuest > 0) {
-      document.getElementById('extraRowLabel').textContent = 'Extra guests · ' + Math.max(0, state.guests - 2);
+      document.getElementById('extraRowLabel').textContent = 'Extra guests · ' + Math.max(0, state.guests - 2) + ' × ' + c.nights + nightsWord;
       document.getElementById('extraLabel').textContent = '+' + peso(c.extraGuest);
     }
 
     document.getElementById('towelsRow').style.display = c.towels > 0 ? 'flex' : 'none';
     if (c.towels > 0) document.getElementById('towelsLabel').textContent = '+' + peso(c.towels);
 
-    document.getElementById('poolRow').style.display = c.pool > 0 ? 'flex' : 'none';
-    if (c.pool > 0) {
-      var poolDesc = c.poolIsHoliday ? 'Pool access (holiday rate)' : 'Pool access';
-      document.getElementById('poolRowLabel').textContent = poolDesc + ' · ' + state.guests;
-      document.getElementById('poolLabel').textContent = '+' + peso(c.pool);
-    }
-
     document.getElementById('parkingRow').style.display = c.parking > 0 ? 'flex' : 'none';
     if (c.parking > 0) {
       document.getElementById('parkingRowLabel').textContent = 'Basement parking · ' + c.nights + nightsWord;
       document.getElementById('parkingLabel').textContent = '+' + peso(c.parking);
+    }
+
+    document.getElementById('promoRow').style.display = c.promo > 0 ? 'flex' : 'none';
+    if (c.promo > 0) {
+      document.getElementById('promoRowLabel').textContent = 'Promo · ' + c.promoCode + ' (' + c.promoPercent + '% off)';
+      document.getElementById('promoLabel').textContent = '−' + peso(c.promo);
     }
 
     document.getElementById('grandTotalLabel').textContent = totalLabel;
@@ -408,9 +448,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   document.getElementById('refNo').addEventListener('input', function (e) { state.refNo = e.target.value; });
   document.getElementById('fbName').addEventListener('input', function (e) { state.fbName = e.target.value; });
 
+  document.getElementById('promoCode').addEventListener('input', function (e) { state.promoCode = e.target.value; render(); });
+
   document.getElementById('addonTowels').addEventListener('change', function (e) { state.addons.towels = e.target.checked; render(); });
   document.getElementById('addonParking').addEventListener('change', function (e) { state.addons.parking = e.target.checked; render(); });
-  document.getElementById('addonPool').addEventListener('change', function (e) { state.addons.pool = e.target.checked; render(); });
 
   // reveal on scroll
   var reveals = Array.prototype.slice.call(document.querySelectorAll('.hof-reveal'));

@@ -360,12 +360,14 @@ src="https://www.facebook.com/tr?id=2104675780928340&ev=PageView&noscript=1"
               <span><span style="font-size:14.5px;font-weight:500">Basement parking</span><span id="parkingHint" style="font-size:12.5px;color:#9a9a9a;margin-left:8px">₱500 / night</span></span>
               <input type="checkbox" id="addonParking" class="hof-checkbox">
             </label>
-            <div style="padding:10px 15px 13px;font-size:12px;color:#9a9a9a;line-height:1.5;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0">Prefer not to reserve? Paid hourly parking is also available near the clubhouse: ₱30 first 3 hrs, ₱10/hr after · ₱20 motorcycles · ₱200 overnight (1:30–6am) + parking fee.</div>
-            <label class="hof-addon-row" style="border-bottom:none">
-              <span><span style="font-size:14.5px;font-weight:500">Pool access</span><span id="poolHint" style="font-size:12.5px;color:#9a9a9a;margin-left:8px">₱150/guest</span></span>
-              <input type="checkbox" id="addonPool" class="hof-checkbox">
-            </label>
+            <div style="padding:10px 15px 13px;font-size:12px;color:#9a9a9a;line-height:1.5;border-top:1px solid #f0f0f0">Prefer not to reserve? Paid hourly parking is also available near the clubhouse: ₱30 first 3 hrs, ₱10/hr after · ₱20 motorcycles · ₱200 overnight (1:30–6am) + parking fee.</div>
           </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <label class="hof-label">Promo code <span style="color:#b3b3b3">· optional</span></label>
+          <input type="text" id="promoCode" placeholder="Enter code" class="hof-input" autocomplete="off" autocapitalize="characters" spellcheck="false">
+          <div id="promoHint" style="margin-top:7px;font-size:12.5px;display:none"></div>
         </div>
 
         <div class="hof-price-box">
@@ -374,8 +376,8 @@ src="https://www.facebook.com/tr?id=2104675780928340&ev=PageView&noscript=1"
             <div class="price-row" id="discountRow" style="justify-content:space-between;color:#5E1622;display:none"><span>Multi-night discount</span><span id="discountLabel">—</span></div>
             <div class="price-row" id="extraRow" style="justify-content:space-between;display:none"><span id="extraRowLabel">Extra guests</span><span id="extraLabel">—</span></div>
             <div class="price-row" id="towelsRow" style="justify-content:space-between;display:none"><span>Towels</span><span id="towelsLabel">—</span></div>
-            <div class="price-row" id="poolRow" style="justify-content:space-between;display:none"><span id="poolRowLabel">Pool access</span><span id="poolLabel">—</span></div>
             <div class="price-row" id="parkingRow" style="justify-content:space-between;display:none"><span id="parkingRowLabel">Parking</span><span id="parkingLabel">—</span></div>
+            <div class="price-row" id="promoRow" style="justify-content:space-between;color:#5E1622;display:none"><span id="promoRowLabel">Promo</span><span id="promoLabel">—</span></div>
             <div class="price-row" style="justify-content:space-between;font-weight:600;padding-top:9px;border-top:1px solid #e5e5e5"><span>Total</span><span id="grandTotalLabel">—</span></div>
             <div class="price-row" style="justify-content:space-between;color:#5E1622;font-weight:600"><span>Deposit due now</span><span id="depositLabel">—</span></div>
             <div class="price-row" style="justify-content:space-between;color:#6b6b6b"><span>Balance at check-in</span><span id="balanceLabel">—</span></div>
