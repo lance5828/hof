@@ -17,30 +17,10 @@ function peso(n) { return '₱' + n.toLocaleString('en-PH'); }
 var blockedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD', source:'...'}] — end is checkout day, exclusive
 
 // ===== Discount codes =====
-var discountCodes = []; // [{code, percent, expires?}] — loaded from data/discount-codes.json
-
-async function loadDiscountCodes() {
-  try {
-    var res = await fetch('data/discount-codes.json');
-    var json = await res.json();
-    discountCodes = json.codes || [];
-  } catch (e) {
-    discountCodes = [];
-  }
-}
-
-// Case-insensitive, expiry-aware lookup — the single source of truth for "is this code valid now".
-function findDiscountCode(input) {
-  if (!input) return null;
-  // Strip all whitespace, not just the ends, so a code pasted from a phone
-  // keyboard (or read aloud with gaps) still lands.
-  var norm = input.replace(/\s+/g, '').toUpperCase();
-  if (!norm) return null;
-  var match = discountCodes.filter(function (c) { return c.code.toUpperCase() === norm; })[0];
-  if (!match) return null;
-  if (match.expires && match.expires < toLocalDateStr(new Date())) return null;
-  return match;
-}
+// Codes are NOT stored here. This site is static and served publicly, so
+// anything the page can read a visitor can read too — a code shipped to the
+// browser is a public code. Validation happens in the Worker, which holds the
+// codes as a secret and only ever answers "valid / not valid" for one guess.
 
 // Formats a Date using its LOCAL calendar fields — toISOString() converts to UTC first,
 // which silently shifts the date by a day in positive-UTC-offset timezones.
@@ -155,14 +135,11 @@ function calc() {
   var parking = ad.parking ? 500 * nights : 0;
   var total = room - discount + extraGuest + towels + parking;
 
-  // Re-validate the applied promo (not just at Apply-time) in case it expired since — cheap insurance.
+  // These figures are for display only. The Worker re-resolves the code and
+  // re-prices the whole booking on submit, so a tampered total here doesn't buy
+  // anything — it just shows up as a mismatch warning in the Telegram alert.
   var promo = state.promoApplied;
-  if (promo && (!promo.expires || promo.expires >= toLocalDateStr(new Date()))) {
-    var promoDiscount = Math.round(total * promo.percent / 100);
-  } else {
-    promo = null;
-    var promoDiscount = 0;
-  }
+  var promoDiscount = promo ? Math.round(total * promo.percent / 100) : 0;
   total = total - promoDiscount;
 
   var deposit = Math.min(DEPOSIT_AMOUNT, total);
@@ -193,18 +170,40 @@ function closeModal() {
 function guestPlus() { state.guests = Math.min(4, state.guests + 1); render(); }
 function guestMinus() { state.guests = Math.max(1, state.guests - 1); render(); }
 
-function applyPromoCode() {
+async function applyPromoCode() {
   clearError('promoError');
   if (!state.promoCode.trim()) { state.promoApplied = null; render(); return; }
-  var match = findDiscountCode(state.promoCode);
-  if (!match) {
+
+  var btn = document.getElementById('promoApplyBtn');
+  var originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+
+  try {
+    var res = await fetch(PROMO_VALIDATE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: state.promoCode })
+    });
+    if (!res.ok) throw new Error('promo endpoint returned ' + res.status);
+    var result = await res.json();
+
+    if (!result.valid) {
+      state.promoApplied = null;
+      showError('promoError', "That code isn't valid or has expired.");
+    } else {
+      state.promoApplied = { code: result.code, percent: result.percent };
+    }
+  } catch (e) {
+    // Network or Worker failure. Say so plainly rather than calling the code
+    // invalid — the guest would otherwise retype a perfectly good code.
     state.promoApplied = null;
-    showError('promoError', "That code isn't valid or has expired.");
+    showError('promoError', "Couldn't check that code right now. Please try again.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
     render();
-    return;
   }
-  state.promoApplied = match;
-  render();
 }
 function clearPromoCode() {
   state.promoCode = '';
@@ -267,6 +266,7 @@ function payNext() {
 }
 var FORMSPREE_ENDPOINT = 'https://formspree.io/f/xykqnwpl';
 var TELEGRAM_NOTIFY_ENDPOINT = 'https://hof-notify.hofstaycation.workers.dev/';
+var PROMO_VALIDATE_ENDPOINT = 'https://hof-notify.hofstaycation.workers.dev/promo';
 
 async function submitBooking() {
   clearError('step3Error');
@@ -288,6 +288,7 @@ async function submitBooking() {
     promo_code: c.promoCode || 'none',
     promo_discount: c.promoDiscount > 0 ? peso(c.promoDiscount) : 'none',
     total: peso(c.total),
+    total_raw: c.total, // unformatted, so the Worker can compare against its own pricing
     deposit_paid: peso(c.deposit),
     balance_due_at_checkin: peso(c.balance),
     payment_method: state.payMethod,
@@ -431,7 +432,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   var checkoutEl = document.getElementById('checkout');
 
   var disableRanges = await loadAvailability();
-  await loadDiscountCodes();
 
   var checkoutPicker = flatpickr(checkoutEl, {
     dateFormat: 'Y-m-d',
