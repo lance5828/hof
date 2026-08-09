@@ -32,7 +32,9 @@ async function loadDiscountCodes() {
 // Case-insensitive, expiry-aware lookup — the single source of truth for "is this code valid now".
 function findDiscountCode(input) {
   if (!input) return null;
-  var norm = input.trim().toUpperCase();
+  // Strip all whitespace, not just the ends, so a code pasted from a phone
+  // keyboard (or read aloud with gaps) still lands.
+  var norm = input.replace(/\s+/g, '').toUpperCase();
   if (!norm) return null;
   var match = discountCodes.filter(function (c) { return c.code.toUpperCase() === norm; })[0];
   if (!match) return null;
@@ -116,7 +118,8 @@ function isPHHoliday(dateStr) {
   return PH_HOLIDAYS.indexOf(dateStr) !== -1;
 }
 
-// True if any night of the stay falls on a PH holiday — used to auto-apply holiday pool pricing.
+// True if any night of the stay falls on a PH holiday. Currently unused — the pool
+// add-on that priced off it has been removed — but kept for future holiday rates.
 function stayIncludesHoliday(checkinStr, nights) {
   var d = new Date(checkinStr + 'T00:00');
   for (var i = 0; i < nights; i++) {

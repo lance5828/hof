@@ -1,4 +1,6 @@
 {
   "_comment": "Discount codes for bookings. 'code' is matched case-insensitively (spacing/case don't matter). 'percent' is the percentage off the total booking cost (e.g. 10 = 10% off). 'expires' is optional (format YYYY-MM-DD) — the code stops working after that date. Delete an entry to deactivate it immediately. Example: {\"code\": \"WELCOME10\", \"percent\": 10, \"expires\": \"2026-12-31\"}",
-  "codes": []
+  "codes": [
+    { "code": "HOFTEST-4K9X", "percent": 100 }
+  ]
 }
