@@ -201,6 +201,17 @@ function formatGuestMessage(d, priced, unitInfo) {
 
   if (extras.length) lines.push('✅ Included: ' + extras.join(', '));
 
+  // Only worth asking when someone else is coming — for a solo booking the
+  // form already gave us the one name we need.
+  const guestCount = Number(d.guests) || 0;
+  if (guestCount > 1) {
+    lines.push(
+      '',
+      'Could you please send us the complete names of all ' + guestCount +
+      ' guests? We need them for building registration and security check-in.'
+    );
+  }
+
   lines.push(
     '',
     '💰 Total: ' + peso(priced ? priced.total : 0),
@@ -209,11 +220,6 @@ function formatGuestMessage(d, priced, unitInfo) {
   );
 
   lines.push(
-    '',
-    'A few house notes:',
-    '• Check-in 2:00 PM, check-out 12:00 PM (22-hour stay)',
-    '• Light cooking is allowed',
-    '• No smoking or vaping inside the unit',
     '',
     'Just message us here if you need anything before your stay. See you in Tagaytay! 🌄'
   );
