@@ -1,7 +1,11 @@
 // Cloudflare Worker for Home of France. Two endpoints:
 //
 //   POST /promo  → validates a promo code, returns { valid, code, percent }
-//   POST /       → receives a booking submission and forwards it to Telegram
+//   POST /       → receives a booking submission and sends TWO Telegram messages:
+//                  1. the internal alert (with a price-mismatch warning if the
+//                     browser's total disagreed with this Worker's)
+//                  2. a guest-ready confirmation in a tap-to-copy block, for
+//                     pasting straight into Messenger
 //
 // Secrets stay server-side and are never exposed in the site's public JS.
 // Deploy via the Cloudflare dashboard (Workers & Pages > Create > paste this
@@ -13,6 +17,11 @@
 //                         [{"code":"WELCOME10","percent":10,"expires":"2026-12-31"}]
 //                         "expires" is optional and inclusive (valid through that
 //                         day, Manila time). Omit it for a code that never expires.
+//
+// Optional:
+//   UNIT_INFO           — tower/unit number, WiFi, gate instructions. Added to
+//                         the guest message under the address. Omitted if unset.
+//                         Keep it here rather than in the repo — the repo is public.
 //
 // Promo codes live here rather than in the site's files because anything the
 // page can read, a visitor can read — the site is static and served publicly,
@@ -135,26 +144,103 @@ function peso(n) {
   return '₱' + Number(n || 0).toLocaleString('en-PH');
 }
 
+// Telegram rejects the whole message (400, so NO notification arrives) if an
+// interpolated value contains a stray < or &. A guest named "Smith & Co" is
+// enough to do it, so every value below goes through here.
+function esc(s) {
+  return String(s === undefined || s === null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// "2026-08-20" -> "Thu, 20 Aug 2026". Parsed as UTC and read back with getUTC*
+// so the calendar date is never shifted by the Worker's timezone.
+function guestDate(dateStr) {
+  const t = Date.parse(String(dateStr || '') + 'T00:00:00Z');
+  if (!isFinite(t)) return String(dateStr || '—');
+  const d = new Date(t);
+  return DAY_NAMES[d.getUTCDay()] + ', ' + d.getUTCDate() + ' ' +
+    MONTH_NAMES[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+}
+
+// The message the host copies and sends to the guest. Deliberately plain text —
+// it's pasted into Messenger, where HTML tags would show up literally.
+function formatGuestMessage(d, priced, unitInfo) {
+  const firstName = String(d.name || '').trim().split(/\s+/)[0] || 'there';
+  const nights = priced ? priced.nights : Number(d.nights) || 0;
+  const nightsWord = nights === 1 ? 'night' : 'nights';
+
+  const extras = [];
+  if (d.towels === 'yes') extras.push('Towels');
+  if (d.parking === 'yes') extras.push('Basement parking');
+
+  const lines = [
+    'Hi ' + firstName + '! Your booking at Home of France is confirmed. 🏠',
+    '',
+    '📍 SMDC Wind Residences, Tagaytay City',
+  ];
+
+  // Tower/unit number, WiFi, gate instructions — whatever you'd normally type
+  // out by hand. Set as the UNIT_INFO variable in the Worker so it stays out of
+  // the public repo. Omitted entirely when unset.
+  if (unitInfo && String(unitInfo).trim()) {
+    lines.push(String(unitInfo).trim());
+  }
+
+  lines.push(
+    '',
+    '📅 Check-in:  ' + guestDate(d.checkin) + ', 2:00 PM',
+    '📅 Check-out: ' + guestDate(d.checkout) + ', 12:00 PM',
+    '🌙 ' + nights + ' ' + nightsWord,
+    '👥 ' + (d.guests || '—') + ' guest(s)'
+  );
+
+  if (extras.length) lines.push('✅ Included: ' + extras.join(', '));
+
+  lines.push(
+    '',
+    '💰 Total: ' + peso(priced ? priced.total : 0),
+    '✅ Deposit received: ' + peso(priced ? priced.deposit : 0),
+    '💵 Balance due at check-in: ' + peso(priced ? priced.balance : 0)
+  );
+
+  lines.push(
+    '',
+    'A few house notes:',
+    '• Check-in 2:00 PM, check-out 12:00 PM (22-hour stay)',
+    '• Light cooking is allowed',
+    '• No smoking or vaping inside the unit',
+    '',
+    'Just message us here if you need anything before your stay. See you in Tagaytay! 🌄'
+  );
+
+  return lines.join('\n');
+}
+
 function formatBookingMessage(d, priced, mismatch) {
   const lines = [
     '🏠 <b>New Booking Request</b>',
     '',
-    '👤 ' + (d.name || '—'),
-    '📧 ' + (d.email || '—'),
-    '📱 ' + (d.phone || '—'),
-    '📘 FB name: ' + (d.facebook_name || '—'),
+    '👤 ' + esc(d.name || '—'),
+    '📧 ' + esc(d.email || '—'),
+    '📱 ' + esc(d.phone || '—'),
+    '📘 FB name: ' + esc(d.facebook_name || '—'),
     '',
-    '📅 ' + (d.checkin || '—') + ' → ' + (d.checkout || '—') + ' (' + (d.nights || '—') + ' nights)',
-    '👥 ' + (d.guests || '—') + ' guest(s)',
+    '📅 ' + esc(d.checkin || '—') + ' → ' + esc(d.checkout || '—') + ' (' + esc(d.nights || '—') + ' nights)',
+    '👥 ' + esc(d.guests || '—') + ' guest(s)',
     '🎟 Promo: ' + (d.promo_code && d.promo_code !== 'none'
-      ? (d.promo_code + ' (−' + peso(priced ? priced.promoDiscount : 0) + ')')
+      ? (esc(d.promo_code) + ' (−' + peso(priced ? priced.promoDiscount : 0) + ')')
       : 'none'),
-    '💰 Total: ' + (priced ? peso(priced.total) : (d.total || '—')),
-    '💵 Deposit paid: ' + (priced ? peso(priced.deposit) : (d.deposit_paid || '—')),
-    '🏷 Balance at check-in: ' + (priced ? peso(priced.balance) : (d.balance_due_at_checkin || '—')),
+    '💰 Total: ' + (priced ? peso(priced.total) : esc(d.total || '—')),
+    '💵 Deposit paid: ' + (priced ? peso(priced.deposit) : esc(d.deposit_paid || '—')),
+    '🏷 Balance at check-in: ' + (priced ? peso(priced.balance) : esc(d.balance_due_at_checkin || '—')),
     '',
-    '💳 Payment: ' + (d.payment_method || '—'),
-    '📎 GCash ref: ' + (d.gcash_reference || '—')
+    '💳 Payment: ' + esc(d.payment_method || '—'),
+    '📎 GCash ref: ' + esc(d.gcash_reference || '—')
   ];
 
   if (mismatch) {
@@ -213,9 +299,28 @@ async function handleBooking(request, env) {
     mismatch = { client: Number(data.total_raw), server: priced.total };
   }
 
-  const text = formatBookingMessage(data, priced, mismatch);
+  const tgRes = await sendTelegram(env, formatBookingMessage(data, priced, mismatch));
 
-  const tgRes = await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
+  if (!tgRes.ok) {
+    const errText = await tgRes.text();
+    return new Response('Failed to send notification: ' + errText, { status: 502, headers: corsHeaders(request) });
+  }
+
+  // Second message: the guest-ready text, wrapped in <pre> so Telegram renders
+  // it as a code block with a one-tap copy button. Best-effort — the booking
+  // alert above already arrived, so a failure here must not fail the request.
+  try {
+    const guestText = formatGuestMessage(data, priced, env.UNIT_INFO);
+    await sendTelegram(env, '📋 <b>Send to guest</b> — tap to copy\n\n<pre>' + esc(guestText) + '</pre>');
+  } catch (e) {
+    // swallow: the host can still write the message by hand
+  }
+
+  return json({ ok: true }, 200, request);
+}
+
+function sendTelegram(env, text) {
+  return fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -224,13 +329,6 @@ async function handleBooking(request, env) {
       parse_mode: 'HTML'
     })
   });
-
-  if (!tgRes.ok) {
-    const errText = await tgRes.text();
-    return new Response('Failed to send notification: ' + errText, { status: 502, headers: corsHeaders(request) });
-  }
-
-  return json({ ok: true }, 200, request);
 }
 
 function json(payload, status, request) {
