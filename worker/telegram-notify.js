@@ -33,6 +33,12 @@
 // CORS is not a security boundary — it only constrains browsers, not curl. It's
 // here to stop other sites from driving these endpoints on a visitor's behalf.
 // Real brute-force protection belongs in a Cloudflare rate-limiting rule.
+// Bumped whenever this file changes. Echoed in every JSON response so you can
+// confirm which version Cloudflare is actually running — the dashboard paste is
+// a manual step, and a stale Worker otherwise looks identical from outside
+// (it still answers 200, just with the old message text).
+const VERSION = '2026-08-09-guest-names';
+
 const ALLOWED_ORIGINS = [
   'https://hofstaycation.com',
   'https://www.hofstaycation.com',
@@ -341,7 +347,7 @@ function sendTelegram(env, text) {
 }
 
 function json(payload, status, request) {
-  return new Response(JSON.stringify(payload), {
+  return new Response(JSON.stringify(Object.assign({}, payload, { v: VERSION })), {
     status: status,
     headers: Object.assign({ 'Content-Type': 'application/json' }, corsHeaders(request))
   });
