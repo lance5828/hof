@@ -13,6 +13,40 @@ var state = {
 
 function peso(n) { return '₱' + n.toLocaleString('en-PH'); }
 
+// Promo codes come back from the Worker, so they're not guest-controlled — but
+// they are free text in a config file, and this goes in via innerHTML.
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// The single source of truth for the price breakdown. Rendered into step 1 and
+// the payment step both; add a line here and it appears in both places.
+function priceRowsHtml(c) {
+  if (!c.valid) return '';
+  var nightsWord = c.nights > 1 ? ' nights' : ' night';
+  var out = '';
+  function row(label, value, style) {
+    out += '<div class="price-row" style="justify-content:space-between;' + (style || '') + '">' +
+      '<span>' + label + '</span><span>' + value + '</span></div>';
+  }
+
+  row('Room · ' + c.nights + nightsWord, peso(c.room));
+  if (c.discount > 0) row('Multi-night discount', '−' + peso(c.discount), 'color:#5E1622');
+  if (c.extraGuest > 0) {
+    row('Extra guests · ' + Math.max(0, state.guests - 2) + ' × ' + c.nights + nightsWord, '+' + peso(c.extraGuest));
+  }
+  if (c.towels > 0) row('Towels', '+' + peso(c.towels));
+  if (c.parking > 0) row('Basement parking · ' + c.nights + nightsWord, '+' + peso(c.parking));
+  if (c.promoDiscount > 0) {
+    row('Promo · ' + escHtml(c.promoCode) + ' (' + c.promoPercent + '% off)', '−' + peso(c.promoDiscount), 'color:#5E1622');
+  }
+  row('Total', peso(c.total), 'font-weight:600;padding-top:9px;border-top:1px solid #e5e5e5');
+  row('Deposit due now', peso(c.deposit), 'color:#5E1622;font-weight:600');
+  row('Balance at check-in', peso(c.balance), 'color:#6b6b6b');
+  return out;
+}
+
 // ===== Availability (blocked dates from other booking channels) =====
 var blockedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD', source:'...'}] — end is checkout day, exclusive
 
@@ -370,44 +404,30 @@ function render() {
   var nightsWord = c.nights > 1 ? ' nights' : ' night';
   document.getElementById('parkingHint').textContent = c.valid && c.nights > 0 ? ('₱500 × ' + c.nights + nightsWord) : '₱500 / night';
 
-  // price breakdown
-  document.getElementById('priceRows').style.display = c.valid ? 'flex' : 'none';
+  // Price breakdown. Built once and rendered into both step 1 and the payment
+  // step, so the guest can still see what they're paying for at the moment they
+  // actually pay — and so the two can never drift apart.
+  var rowsHtml = priceRowsHtml(c);
+  ['priceRows', 'priceRows2'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = rowsHtml;
+    el.style.display = c.valid ? 'flex' : 'none';
+  });
   document.getElementById('priceEmpty').style.display = c.valid ? 'none' : 'block';
-  if (c.valid) {
-    document.getElementById('roomRowLabel').textContent = 'Room · ' + c.nights + nightsWord;
-    document.getElementById('roomLabel').textContent = peso(c.room);
 
-    document.getElementById('discountRow').style.display = c.discount > 0 ? 'flex' : 'none';
-    if (c.discount > 0) document.getElementById('discountLabel').textContent = '−' + peso(c.discount);
-
-    document.getElementById('promoRow').style.display = c.promoDiscount > 0 ? 'flex' : 'none';
-    if (c.promoDiscount > 0) {
-      document.getElementById('promoRowLabel').textContent = 'Promo · ' + c.promoCode + ' (' + c.promoPercent + '% off)';
-      document.getElementById('promoLabel').textContent = '−' + peso(c.promoDiscount);
-    }
-    document.getElementById('promoSuccess').style.display = (state.promoApplied && c.promoDiscount > 0) ? 'block' : 'none';
-    if (state.promoApplied && c.promoDiscount > 0) {
-      document.getElementById('promoSuccess').textContent = state.promoApplied.code + ' applied — ' + state.promoApplied.percent + '% off';
-    }
-
-    document.getElementById('extraRow').style.display = c.extraGuest > 0 ? 'flex' : 'none';
-    if (c.extraGuest > 0) {
-      document.getElementById('extraRowLabel').textContent = 'Extra guests · ' + Math.max(0, state.guests - 2) + ' × ' + c.nights + nightsWord;
-      document.getElementById('extraLabel').textContent = '+' + peso(c.extraGuest);
-    }
-
-    document.getElementById('towelsRow').style.display = c.towels > 0 ? 'flex' : 'none';
-    if (c.towels > 0) document.getElementById('towelsLabel').textContent = '+' + peso(c.towels);
-
-    document.getElementById('parkingRow').style.display = c.parking > 0 ? 'flex' : 'none';
-    if (c.parking > 0) {
-      document.getElementById('parkingRowLabel').textContent = 'Basement parking · ' + c.nights + nightsWord;
-      document.getElementById('parkingLabel').textContent = '+' + peso(c.parking);
-    }
-
-    document.getElementById('grandTotalLabel').textContent = totalLabel;
-    document.getElementById('depositLabel').textContent = depositStr;
-    document.getElementById('balanceLabel').textContent = balanceStr;
+  // Promo feedback is deliberately OUTSIDE the c.valid branch. A guest often
+  // types a code before picking dates; leaving this inside meant a valid code
+  // produced no visible response at all, and a stale "applied" message lingered
+  // after the dates were cleared.
+  var successEl = document.getElementById('promoSuccess');
+  if (state.promoApplied) {
+    successEl.style.display = 'block';
+    successEl.textContent = c.promoDiscount > 0
+      ? state.promoApplied.code + ' applied — ' + state.promoApplied.percent + '% off (−' + peso(c.promoDiscount) + ')'
+      : state.promoApplied.code + ' applied — ' + state.promoApplied.percent + '% off your stay';
+  } else {
+    successEl.style.display = 'none';
   }
 
   // done screen
