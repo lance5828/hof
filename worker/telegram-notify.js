@@ -173,6 +173,10 @@ function formatGuestMessage(d, priced, unitInfo) {
   const firstName = String(d.name || '').trim().split(/\s+/)[0] || 'there';
   const nights = priced ? priced.nights : Number(d.nights) || 0;
   const nightsWord = nights === 1 ? 'night' : 'nights';
+  const guestCount = Number(d.guests) || 0;
+  const guestsLabel = guestCount
+    ? guestCount + (guestCount === 1 ? ' guest' : ' guests')
+    : '—';
 
   const extras = [];
   if (d.towels === 'yes') extras.push('Towels');
@@ -196,14 +200,13 @@ function formatGuestMessage(d, priced, unitInfo) {
     '📅 Check-in:  ' + guestDate(d.checkin) + ', 2:00 PM',
     '📅 Check-out: ' + guestDate(d.checkout) + ', 12:00 PM',
     '🌙 ' + nights + ' ' + nightsWord,
-    '👥 ' + (d.guests || '—') + ' guest(s)'
+    '👥 ' + guestsLabel
   );
 
   if (extras.length) lines.push('✅ Included: ' + extras.join(', '));
 
   // Only worth asking when someone else is coming — for a solo booking the
   // form already gave us the one name we need.
-  const guestCount = Number(d.guests) || 0;
   if (guestCount > 1) {
     lines.push(
       '',
