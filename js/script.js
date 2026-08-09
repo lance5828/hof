@@ -5,15 +5,40 @@ var state = {
   checkin: '',
   checkout: '',
   guests: 1,
-  addons: { towels: false, pool: false, parking: false },
+  addons: { towels: false, parking: false },
   name: '', email: '', phone: '', refNo: '', fbName: '',
-  payMethod: 'gcash'
+  payMethod: 'gcash',
+  promoCode: '', promoApplied: null // promoApplied holds the matched {code, percent, expires} or null
 };
 
 function peso(n) { return '₱' + n.toLocaleString('en-PH'); }
 
 // ===== Availability (blocked dates from other booking channels) =====
 var blockedRanges = []; // [{start:'YYYY-MM-DD', end:'YYYY-MM-DD', source:'...'}] — end is checkout day, exclusive
+
+// ===== Discount codes =====
+var discountCodes = []; // [{code, percent, expires?}] — loaded from data/discount-codes.json
+
+async function loadDiscountCodes() {
+  try {
+    var res = await fetch('data/discount-codes.json');
+    var json = await res.json();
+    discountCodes = json.codes || [];
+  } catch (e) {
+    discountCodes = [];
+  }
+}
+
+// Case-insensitive, expiry-aware lookup — the single source of truth for "is this code valid now".
+function findDiscountCode(input) {
+  if (!input) return null;
+  var norm = input.trim().toUpperCase();
+  if (!norm) return null;
+  var match = discountCodes.filter(function (c) { return c.code.toUpperCase() === norm; })[0];
+  if (!match) return null;
+  if (match.expires && match.expires < toLocalDateStr(new Date())) return null;
+  return match;
+}
 
 // Formats a Date using its LOCAL calendar fields — toISOString() converts to UTC first,
 // which silently shifts the date by a day in positive-UTC-offset timezones.
@@ -105,7 +130,7 @@ function stayIncludesHoliday(checkinStr, nights) {
 var DEPOSIT_AMOUNT = 1000; // flat deposit collected at booking; remainder due at check-in
 
 function calc() {
-  var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, pool: 0, parking: 0, total: 0, deposit: 0, balance: 0, valid: false };
+  var empty = { nights: 0, room: 0, discount: 0, extraGuest: 0, towels: 0, parking: 0, promoCode: '', promoPercent: 0, promoDiscount: 0, total: 0, deposit: 0, balance: 0, valid: false };
   if (!state.checkin || !state.checkout) return empty;
   var a = new Date(state.checkin + 'T00:00');
   var b = new Date(state.checkout + 'T00:00');
@@ -122,15 +147,28 @@ function calc() {
     room += (day === 5 || day === 6) ? 2500 : 2200;
   }
   var discount = nights > 1 ? 100 * nights : 0;
-  var extraGuest = Math.max(0, guests - 2) * 200;
+  var extraGuest = Math.max(0, guests - 2) * 200 * nights;
   var towels = ad.towels ? 50 : 0;
-  var poolIsHoliday = stayIncludesHoliday(state.checkin, nights);
-  var pool = ad.pool ? (poolIsHoliday ? 300 : 150) * guests : 0;
   var parking = ad.parking ? 500 * nights : 0;
-  var total = room - discount + extraGuest + towels + pool + parking;
+  var total = room - discount + extraGuest + towels + parking;
+
+  // Re-validate the applied promo (not just at Apply-time) in case it expired since — cheap insurance.
+  var promo = state.promoApplied;
+  if (promo && (!promo.expires || promo.expires >= toLocalDateStr(new Date()))) {
+    var promoDiscount = Math.round(total * promo.percent / 100);
+  } else {
+    promo = null;
+    var promoDiscount = 0;
+  }
+  total = total - promoDiscount;
+
   var deposit = Math.min(DEPOSIT_AMOUNT, total);
   var balance = total - deposit;
-  return { nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, pool: pool, poolIsHoliday: poolIsHoliday, parking: parking, total: total, deposit: deposit, balance: balance, valid: true, guests: guests };
+  return {
+    nights: nights, room: room, discount: discount, extraGuest: extraGuest, towels: towels, parking: parking,
+    promoCode: promo ? promo.code : '', promoPercent: promo ? promo.percent : 0, promoDiscount: promoDiscount,
+    total: total, deposit: deposit, balance: balance, valid: true, guests: guests
+  };
 }
 
 // ===== Modal open/close =====
@@ -151,6 +189,27 @@ function closeModal() {
 // ===== Field handlers =====
 function guestPlus() { state.guests = Math.min(4, state.guests + 1); render(); }
 function guestMinus() { state.guests = Math.max(1, state.guests - 1); render(); }
+
+function applyPromoCode() {
+  clearError('promoError');
+  if (!state.promoCode.trim()) { state.promoApplied = null; render(); return; }
+  var match = findDiscountCode(state.promoCode);
+  if (!match) {
+    state.promoApplied = null;
+    showError('promoError', "That code isn't valid or has expired.");
+    render();
+    return;
+  }
+  state.promoApplied = match;
+  render();
+}
+function clearPromoCode() {
+  state.promoCode = '';
+  state.promoApplied = null;
+  document.getElementById('promoInput').value = '';
+  clearError('promoError');
+  render();
+}
 
 function setPayMethod(m) {
   state.payMethod = m;
@@ -223,7 +282,8 @@ async function submitBooking() {
     guests: state.guests,
     towels: state.addons.towels ? 'yes' : 'no',
     parking: state.addons.parking ? 'yes' : 'no',
-    pool: state.addons.pool ? (c.poolIsHoliday ? 'yes (holiday rate)' : 'yes (regular rate)') : 'no',
+    promo_code: c.promoCode || 'none',
+    promo_discount: c.promoDiscount > 0 ? peso(c.promoDiscount) : 'none',
     total: peso(c.total),
     deposit_paid: peso(c.deposit),
     balance_due_at_checkin: peso(c.balance),
@@ -305,7 +365,6 @@ function render() {
 
   var nightsWord = c.nights > 1 ? ' nights' : ' night';
   document.getElementById('parkingHint').textContent = c.valid && c.nights > 0 ? ('₱500 × ' + c.nights + nightsWord) : '₱500 / night';
-  document.getElementById('poolHint').textContent = c.valid && c.nights > 0 ? (c.poolIsHoliday ? '₱300/guest (holiday)' : '₱150/guest') : '₱150/guest';
 
   // price breakdown
   document.getElementById('priceRows').style.display = c.valid ? 'flex' : 'none';
@@ -317,21 +376,24 @@ function render() {
     document.getElementById('discountRow').style.display = c.discount > 0 ? 'flex' : 'none';
     if (c.discount > 0) document.getElementById('discountLabel').textContent = '−' + peso(c.discount);
 
+    document.getElementById('promoRow').style.display = c.promoDiscount > 0 ? 'flex' : 'none';
+    if (c.promoDiscount > 0) {
+      document.getElementById('promoRowLabel').textContent = 'Promo · ' + c.promoCode + ' (' + c.promoPercent + '% off)';
+      document.getElementById('promoLabel').textContent = '−' + peso(c.promoDiscount);
+    }
+    document.getElementById('promoSuccess').style.display = (state.promoApplied && c.promoDiscount > 0) ? 'block' : 'none';
+    if (state.promoApplied && c.promoDiscount > 0) {
+      document.getElementById('promoSuccess').textContent = state.promoApplied.code + ' applied — ' + state.promoApplied.percent + '% off';
+    }
+
     document.getElementById('extraRow').style.display = c.extraGuest > 0 ? 'flex' : 'none';
     if (c.extraGuest > 0) {
-      document.getElementById('extraRowLabel').textContent = 'Extra guests · ' + Math.max(0, state.guests - 2);
+      document.getElementById('extraRowLabel').textContent = 'Extra guests · ' + Math.max(0, state.guests - 2) + ' × ' + c.nights + nightsWord;
       document.getElementById('extraLabel').textContent = '+' + peso(c.extraGuest);
     }
 
     document.getElementById('towelsRow').style.display = c.towels > 0 ? 'flex' : 'none';
     if (c.towels > 0) document.getElementById('towelsLabel').textContent = '+' + peso(c.towels);
-
-    document.getElementById('poolRow').style.display = c.pool > 0 ? 'flex' : 'none';
-    if (c.pool > 0) {
-      var poolDesc = c.poolIsHoliday ? 'Pool access (holiday rate)' : 'Pool access';
-      document.getElementById('poolRowLabel').textContent = poolDesc + ' · ' + state.guests;
-      document.getElementById('poolLabel').textContent = '+' + peso(c.pool);
-    }
 
     document.getElementById('parkingRow').style.display = c.parking > 0 ? 'flex' : 'none';
     if (c.parking > 0) {
@@ -366,6 +428,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   var checkoutEl = document.getElementById('checkout');
 
   var disableRanges = await loadAvailability();
+  await loadDiscountCodes();
 
   var checkoutPicker = flatpickr(checkoutEl, {
     dateFormat: 'Y-m-d',
@@ -410,7 +473,12 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   document.getElementById('addonTowels').addEventListener('change', function (e) { state.addons.towels = e.target.checked; render(); });
   document.getElementById('addonParking').addEventListener('change', function (e) { state.addons.parking = e.target.checked; render(); });
-  document.getElementById('addonPool').addEventListener('change', function (e) { state.addons.pool = e.target.checked; render(); });
+
+  document.getElementById('promoInput').addEventListener('input', function (e) { state.promoCode = e.target.value; });
+  document.getElementById('promoInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); applyPromoCode(); }
+  });
+  document.getElementById('promoApplyBtn').addEventListener('click', applyPromoCode);
 
   // reveal on scroll
   var reveals = Array.prototype.slice.call(document.querySelectorAll('.hof-reveal'));

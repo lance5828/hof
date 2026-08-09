@@ -28,6 +28,7 @@ function formatBookingMessage(d) {
     '',
     '📅 ' + (d.checkin || '—') + ' → ' + (d.checkout || '—') + ' (' + (d.nights || '—') + ' nights)',
     '👥 ' + (d.guests || '—') + ' guest(s)',
+    '🎟 Promo: ' + (d.promo_code && d.promo_code !== 'none' ? (d.promo_code + ' (−' + (d.promo_discount || '') + ')') : 'none'),
     '💰 Total: ' + (d.total || '—'),
     '💵 Deposit paid: ' + (d.deposit_paid || '—'),
     '🏷 Balance at check-in: ' + (d.balance_due_at_checkin || '—'),
