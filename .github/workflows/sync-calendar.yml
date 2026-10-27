@@ -3,7 +3,12 @@ name: Sync booking calendar
 on:
   schedule:
     - cron: '*/30 * * * *'  # every 30 minutes
-  workflow_dispatch: {}     # allows manual "Run workflow" button in the Actions tab
+  workflow_dispatch:        # allows manual "Run workflow" button in the Actions tab
+    inputs:
+      test_alert:
+        description: 'Send a test Telegram message'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -24,6 +29,9 @@ jobs:
           BOOKINGCOM_ICAL_URL: ${{ secrets.BOOKINGCOM_ICAL_URL }}
           AGODA_ICAL_URL: ${{ secrets.AGODA_ICAL_URL }}
           GOOGLE_CALENDAR_ICAL_URL: ${{ secrets.GOOGLE_CALENDAR_ICAL_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TEST_ALERT: ${{ github.event.inputs.test_alert }}
         run: node .github/scripts/sync-calendar.js
 
       - name: Commit updated calendar if changed
